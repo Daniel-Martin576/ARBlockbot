@@ -92,6 +92,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/UX/SampleUXScene.unity
     guid: 3b42d67a72bbc4004bf713db0e312326
+  - enabled: 1
+    path: Assets/Scenes/SimpleAR/SimpleAR - Copy.unity
+    guid: 4fafc9ee8c4e31840bd43256894f055f
   m_configObjects:
     com.unity.xr.arkit.PlayerSettings: {fileID: 11400000, guid: 2d5fb8e61571b4e3897f221189089fd6,
+      type: 2}
+    com.unity.xr.management.arcore_loader: {fileID: 11400000, guid: b0a3bae5d9c79d7478a9469fdab7a676,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 483587727a864004aa69dbd72cabf783,
       type: 2}
