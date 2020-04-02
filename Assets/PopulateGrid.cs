@@ -21,7 +21,8 @@ public class PopulateGrid : MonoBehaviour
 
 	void Populate()
 	{
-		GameObject newObj; // Create GameObject instance
+		// Create GameObject instance
+		GameObject newObj;
 
 		for (int i = 0; i < numberToCreate; i++)
 		{
@@ -30,7 +31,7 @@ public class PopulateGrid : MonoBehaviour
 
 			// Randomize the color of our image
 			newObj.GetComponent<Image>().color = Random.ColorHSV();
-			
+
 		}
 
 	}
