@@ -18,7 +18,6 @@ public abstract class Block : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
     private Color[] beforeColors;
 
 
-    // Start is called before the first frame update
     void Start()
     {
         trash = GameObject.FindGameObjectWithTag("Trash");
@@ -165,5 +164,18 @@ public abstract class Block : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
 
         return closeEnough;
     }
+
+    public Connection getConnectionType(Connection.Type type)
+    {
+        foreach (Connection myCon in myConnections)
+        {
+            if (myCon.type == type && myCon.linked())
+            {
+                return myCon;
+            }
+        }
+        return null;
+    }
+
     public abstract void execute();
 }

@@ -8,13 +8,14 @@ public class Connection : MonoBehaviour
     public Direction direction;
     public Gender gender;
     public Authority authority;
+    public Type type;
 
     private Connection linkedTo;
 
     public enum Direction { Horz, Vert }
     public enum Gender { Male, Female }
     public enum Authority { Leader, Follower }
-    public enum Type { Prev, Next, Execute, Return}
+    public enum Type { None, Prev, Next, Execute, Return }
 
     static public bool canConnect(Connection con1, Connection con2)
     {
