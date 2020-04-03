@@ -5,9 +5,11 @@ using UnityEngine.UI;
 
 public class PopulateGrid : MonoBehaviour
 {
-	public GameObject prefab; // This is our prefab object that will be exposed in the inspector
+	// This is our prefab object that will be exposed in the inspector
+	public GameObject prefab;
 
-	public int numberToCreate; // number of objects to create. Exposed in inspector
+	// number of objects to create. Exposed in inspector
+	public int numberToCreate;
 
 	void Start()
 	{
