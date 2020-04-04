@@ -121,11 +121,18 @@ PlayerSettings:
     Others: 1
   bundleVersion: 0.1
 <<<<<<< HEAD
+<<<<<<< HEAD
   preloadedAssets: []
 =======
   preloadedAssets:
   - {fileID: 4800000, guid: c9f956787b1d945e7b36e0516201fc76, type: 3}
 >>>>>>> 5cbc56231e9e9c4e4062b6a9ffb7a6595a267834
+=======
+  preloadedAssets:
+  - {fileID: 4826849712200873738, guid: 483587727a864004aa69dbd72cabf783, type: 2}
+  - {fileID: 11400000, guid: b0a3bae5d9c79d7478a9469fdab7a676, type: 2}
+  - {fileID: 4800000, guid: c9f956787b1d945e7b36e0516201fc76, type: 3}
+>>>>>>> 5ac2e5e67c46c30efab6cbe4a5f610aed2596af7
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -672,7 +679,7 @@ PlayerSettings:
   platformArchitecture:
     iPhone: 1
   scriptingBackend:
-    Android: 1
+    Android: 0
   il2cppCompilerConfiguration: {}
   managedStrippingLevel: {}
   incrementalIl2cppBuild: {}
