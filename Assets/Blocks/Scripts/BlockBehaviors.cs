@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,6 +27,14 @@ public class BlockBehaviors : Block
                     print(executeCon.getLinkToBlock().getReturn());
                     break;
 
+            case Behaviour.IF:
+                if ((executeCon = getConnectionType(Connection.Type.Check)) != null)
+                    if (convertStringToBool(executeCon.getLinkToBlock().getReturn()))
+                        if ((executeCon = getConnectionType(Connection.Type.Execute)) != null)
+                            executeCon.getLinkToBlock().execute();
+                
+                break;
+
             default:
                 break;
 
@@ -34,4 +43,20 @@ public class BlockBehaviors : Block
         if ((executeCon = getConnectionType(Connection.Type.Next)) != null)
             executeCon.getLinkToBlock().execute();
     }
+
+    public static bool convertStringToBool(object obj)
+    {
+        if (obj == null) return false;
+
+        bool check = false;
+        double x;
+
+        // string of True and != 0 numbers work
+        if (obj is string && Boolean.TryParse((string) obj, out check)) { }
+        else if (obj is string && Double.TryParse((string) obj, out x))
+            check = Convert.ToBoolean(x);
+
+        return check;
+    }
 }
+

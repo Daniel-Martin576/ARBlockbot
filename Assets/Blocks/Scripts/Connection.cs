@@ -15,7 +15,7 @@ public class Connection : MonoBehaviour
     public enum Direction { Horz, Vert }
     public enum Gender { Male, Female }
     public enum Authority { Leader, Follower }
-    public enum Type { None, Prev, Next, Execute, Return }
+    public enum Type { None, Prev, Next, Execute, Return, Check }
 
     static public bool canConnect(Connection con1, Connection con2)
     {
