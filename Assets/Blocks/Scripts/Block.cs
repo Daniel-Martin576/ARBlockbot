@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class Block : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class Block : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     private GameObject trash;
     private const float maxTrashDist = 1000f;
@@ -18,7 +18,7 @@ public abstract class Block : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
     private Color[] beforeColors;
 
 
-    void Start()
+    public void Start()
     {
         trash = GameObject.FindGameObjectWithTag("Trash");
         myConnections = this.gameObject.GetComponentsInChildren<Connection>();
@@ -177,5 +177,8 @@ public abstract class Block : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         return null;
     }
 
-    public abstract void execute();
+    // public abstract void execute();
+
+    public virtual void execute() { }
+    public virtual object getReturn() => null;
 }

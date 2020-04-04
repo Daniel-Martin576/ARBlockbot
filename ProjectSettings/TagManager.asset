@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Block
   - Trash
+  - Extend
   layers:
   - Default
   - TransparentFX

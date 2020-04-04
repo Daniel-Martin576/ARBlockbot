@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BlockBehaviors : Block
 {
@@ -10,28 +11,27 @@ public class BlockBehaviors : Block
 
     public enum Behaviour
     {
-        Print, Nothing, IF
+        Nothing, Print, TextBox, IF
 
     }
 
     public override void execute()
     {
+        Connection executeCon;
+
         switch (behaviour)
         {
             case Behaviour.Print:
-                Connection executeCon;
-                if ((executeCon = getConnectionType(Connection.Type.Execute)) != null) {
-                    executeCon.getLinkToBlock().execute();
-                }
-                print("asdasd");
-                break;
-            case Behaviour.Nothing:
-                break;
+                if ((executeCon = getConnectionType(Connection.Type.Execute)) != null)
+                    print(executeCon.getLinkToBlock().getReturn());
+                    break;
+
             default:
-                throw new System.NotImplementedException("Behavior not implemented");
+                break;
+
         }
+
+        if ((executeCon = getConnectionType(Connection.Type.Next)) != null)
+            executeCon.getLinkToBlock().execute();
     }
-
-
-
 }
