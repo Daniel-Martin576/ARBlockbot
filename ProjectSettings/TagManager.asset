@@ -7,6 +7,7 @@ TagManager:
   - Block
   - Trash
   - Extend
+  - drawGroup
   layers:
   - Default
   - TransparentFX

@@ -87,14 +87,17 @@ EditorBuildSettings:
     path: Assets/Scenes/Scale.unity
     guid: 13ac91f677dc22f4ca320ef8ae727b68
   - enabled: 0
-    path: Assets/Scenes/SimpleAR/SimpleAR.unity
+    path: Assets/Scenes/Blockbot.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 0
     path: Assets/Scenes/UX/SampleUXScene.unity
     guid: 3b42d67a72bbc4004bf713db0e312326
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SimpleAR/SimpleAR - Copy.unity
     guid: 4fafc9ee8c4e31840bd43256894f055f
+  - enabled: 1
+    path: Assets/Scenes/SimpleAR/code-drawer.unity
+    guid: f7ee5b2d07cef4ab9963a1385abe6f6c
   m_configObjects:
     com.unity.xr.arkit.PlayerSettings: {fileID: 11400000, guid: 2d5fb8e61571b4e3897f221189089fd6,
       type: 2}
