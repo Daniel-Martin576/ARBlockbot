@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,19 +13,21 @@ public class DrawerInteractions : MonoBehaviour
   private GameObject downArrow;
   private int counter;
 
+  public GameObject dButton;
+
     // Start is called before the first frame update
     void Start()
     {
-      upArrow = GameObject.Find("dButton").transform.Find("up-arrow").gameObject;
+      upArrow = dButton.transform.Find("up-arrow").gameObject;
       upArrow.GetComponent<Text>().text = "^";
 
-      downArrow = GameObject.Find("dButton").transform.Find("down-arrow").gameObject;
+      downArrow = dButton.transform.Find("down-arrow").gameObject;
       downArrow.GetComponent<Text>().text = "";
 
       GameObject canvas = GameObject.Find("Canvas");
       cHeight = canvas.GetComponent<Canvas>().pixelRect.height;
 
-      buttonHeight = GameObject.Find("dButton").GetComponent<RectTransform>().rect.height;
+      buttonHeight = dButton.GetComponent<RectTransform>().rect.height;
 
       RectTransform r = GameObject.Find("Drawer").GetComponent<RectTransform>();
       r.position = new Vector3(r.position.x, -r.position.y + buttonHeight, r.position.z);
