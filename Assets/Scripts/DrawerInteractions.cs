@@ -8,9 +8,10 @@ public class DrawerInteractions : MonoBehaviour
   private GameObject[] drawerElements;
   private float cHeight;
   private float buttonHeight;
-  private float distanceToTop = (float) 300.0;
+  private float distanceToTop;
   private GameObject upArrow;
   private GameObject downArrow;
+  private int counter;
 
     // Start is called before the first frame update
     void Start()
@@ -31,7 +32,15 @@ public class DrawerInteractions : MonoBehaviour
 
       distanceToTop = cHeight - buttonHeight;
 
-      Debug.Log(cHeight);
+      counter = 0;
+    }
+
+    public void OnClickBehaviour() {
+      counter++;
+      if (counter % 2 == 0) {
+        DrawerDown();
+      }
+      else DrawerUp();
     }
 
     // moving the drawer up + switching the arrows
