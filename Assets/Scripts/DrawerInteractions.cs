@@ -26,13 +26,15 @@ public class DrawerInteractions : MonoBehaviour
   private RectTransform r;
   private RectTransform rh;
 
+  private Image buttonImg;
+  private Color translucentHandle;
+  private Color opaqueHandle;
+
   public GameObject dButton;
 
     // Start is called before the first frame update
     void Start()
     {
-      // drawer = GameObject.FindGameObjectsWithTag("drawGroup");
-
       upArrow = dButton.transform.Find("up-arrow").gameObject;
       upArrow.GetComponent<Text>().text = "^";
 
@@ -54,6 +56,11 @@ public class DrawerInteractions : MonoBehaviour
       drawerHandleStart = rh.position;
       drawerHandleEnd = new Vector3(rh.position.x, rh.position.y + distanceToTop - buttonHeight, rh.position.z);
 
+      buttonImg = dButton.GetComponent<Image>();
+      translucentHandle = new Color(1, 1, 1, 0.3f);
+      opaqueHandle = new Color(1, 1, 1, 1);
+      buttonImg.color = translucentHandle;
+
       counter = 0;
     }
 
@@ -61,8 +68,12 @@ public class DrawerInteractions : MonoBehaviour
       counter++;
       if (counter % 2 == 0) {
         move = 2;
+        buttonImg.color = translucentHandle;
       }
-      else move = 1;
+      else {
+        move = 1;
+        buttonImg.color = opaqueHandle;
+      }
     }
 
     // moving the drawer up + switching the arrows
@@ -96,6 +107,8 @@ public class DrawerInteractions : MonoBehaviour
 
         upArrow.GetComponent<Text>().text = "";
         downArrow.GetComponent<Text>().text = "^";
+
+        // buttonImg.color = Color.Lerp(opaqueHandle, translucentHandle, Time.deltaTime * speed);
       }
 
       if (move == 2) {
@@ -104,6 +117,8 @@ public class DrawerInteractions : MonoBehaviour
 
         upArrow.GetComponent<Text>().text = "^";
         downArrow.GetComponent<Text>().text = "";
+
+          // buttonImg.color = Color.Lerp(translucentHandle, opaqueHandle, Time.deltaTime * speed);
       }
 
       // move = 0;
