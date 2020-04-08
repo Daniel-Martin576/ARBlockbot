@@ -10,6 +10,7 @@ public class DrawerInteractions : MonoBehaviour
   private float cHeight;
   private float buttonHeight;
   private float distanceToTop;
+  private float speed = 10f;
 
   private GameObject upArrow;
   private GameObject downArrow;
@@ -17,12 +18,20 @@ public class DrawerInteractions : MonoBehaviour
   // 1 is up, 2 is down
   private int move = 0;
 
+  private Vector3 drawerStart;
+  private Vector3 drawerEnd;
+  private Vector3 drawerHandleStart;
+  private Vector3 drawerHandleEnd;
+
+  private RectTransform r;
+  private RectTransform rh;
+
   public GameObject dButton;
 
     // Start is called before the first frame update
     void Start()
     {
-      drawerElements = GameObject.FindGameObjectsWithTag("drawGroup");
+      // drawer = GameObject.FindGameObjectsWithTag("drawGroup");
 
       upArrow = dButton.transform.Find("up-arrow").gameObject;
       upArrow.GetComponent<Text>().text = "^";
@@ -32,13 +41,18 @@ public class DrawerInteractions : MonoBehaviour
 
       GameObject canvas = GameObject.Find("Canvas");
       cHeight = canvas.GetComponent<Canvas>().pixelRect.height;
+      distanceToTop = cHeight - buttonHeight;
 
-      buttonHeight = dButton.GetComponent<RectTransform>().rect.height;
+      rh = dButton.GetComponent<RectTransform>();
+      buttonHeight = rh.rect.height;
 
-      RectTransform r = GameObject.Find("Drawer").GetComponent<RectTransform>();
+      r = GameObject.Find("Drawer").GetComponent<RectTransform>();
       r.position = new Vector3(r.position.x, -r.position.y + buttonHeight, r.position.z);
 
-      distanceToTop = cHeight - buttonHeight;
+      drawerStart = r.position;
+      drawerEnd = new Vector3(r.position.x, r.position.y + distanceToTop - buttonHeight, r.position.z);
+      drawerHandleStart = rh.position;
+      drawerHandleEnd = new Vector3(rh.position.x, rh.position.y + distanceToTop - buttonHeight, rh.position.z);
 
       counter = 0;
     }
@@ -46,9 +60,9 @@ public class DrawerInteractions : MonoBehaviour
     public void OnClickBehaviour() {
       counter++;
       if (counter % 2 == 0) {
-        DrawerDown();
+        move = 2;
       }
-      else DrawerUp();
+      else move = 1;
     }
 
     // moving the drawer up + switching the arrows
@@ -75,8 +89,24 @@ public class DrawerInteractions : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+      // DrawerUp
+      if (move == 1) {
+        r.position = Vector3.Lerp(r.position, drawerEnd, Time.deltaTime * speed);
+        rh.position = Vector3.Lerp(rh.position, drawerHandleEnd, Time.deltaTime * speed);
 
+        upArrow.GetComponent<Text>().text = "";
+        downArrow.GetComponent<Text>().text = "^";
+      }
 
+      if (move == 2) {
+        r.position = Vector3.Lerp(r.position, drawerStart, Time.deltaTime * speed);
+        rh.position = Vector3.Lerp(rh.position, drawerHandleStart, Time.deltaTime * speed);
+
+        upArrow.GetComponent<Text>().text = "^";
+        downArrow.GetComponent<Text>().text = "";
+      }
+
+      // move = 0;
 
       if (Input.touchCount > 0  && Input.GetTouch(0).phase == TouchPhase.Moved) {
 
