@@ -5,13 +5,14 @@ using UnityEngine.UI;
 
 public class HighlightTracker : MonoBehaviour
 {
-  public Image lastHighlight;
+  public static Image lastHighlight;
     // Start is called before the first frame update
     void Start()
     {
         GameObject highlight = GameObject.Find("Button").transform.GetChild(0).gameObject;
         Image im = highlight.GetComponent<Image>();
         im.enabled = true;
+        lastHighlight = im;
     }
 
     // Update is called once per frame
