@@ -8,6 +8,7 @@ TagManager:
   - Trash
   - Extend
   - drawGroup
+  - highlight
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - 
   - PostProcessing
   - Screen Space
-  - 
+  - Highlight
   - 
   - 
   - 
