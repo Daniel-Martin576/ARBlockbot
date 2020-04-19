@@ -17,6 +17,11 @@ public class PlaceOnPlane : MonoBehaviour
     [Tooltip("Instantiates this prefab on a plane at the touch location.")]
     GameObject m_PlacedPrefab;
 
+    public string dir
+    {
+        get { return "r"; }
+        set { dir = value; }
+    }
     /// <summary>
     /// The prefab to instantiate on touch.
     /// </summary>
@@ -74,7 +79,23 @@ public class PlaceOnPlane : MonoBehaviour
             }
             else
             {
-                spawnedObject.transform.position = hitPose.position;
+                //1 -> and -1 <-
+
+                float moveHorizontal = -1f;
+                if (dir != "r")
+                {
+                    moveHorizontal = 1f;
+                }
+                else
+                {
+                    moveHorizontal = -1f;
+                }
+                float moveVertical = 0f;
+                Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+
+                //rb.AddForce(movement * speed);
+                spawnedObject.transform.Translate(movement * 1 * Time.deltaTime);
+                //spawnedObject.transform.position = hitPose.position;
             }
         }
     }
