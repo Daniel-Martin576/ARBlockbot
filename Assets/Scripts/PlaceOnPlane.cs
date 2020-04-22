@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
-
+using UnityStandardAssets.CrossPlatformInput;
 /// <summary>
 /// Listens for touch events and performs an AR raycast from the screen touch point.
 /// AR raycasts will only hit detected trackables like feature points and planes.
@@ -16,12 +16,11 @@ public class PlaceOnPlane : MonoBehaviour
     [SerializeField]
     [Tooltip("Instantiates this prefab on a plane at the touch location.")]
     GameObject m_PlacedPrefab;
-
-    public string dir
-    {
-        get { return "r"; }
-        set { dir = value; }
-    }
+    /*
+    [SerializeField]
+    GameObject leftButton;
+    */
+    public float dirX;
     /// <summary>
     /// The prefab to instantiate on touch.
     /// </summary>
@@ -64,6 +63,7 @@ public class PlaceOnPlane : MonoBehaviour
 
     void Update()
     {
+        dirX = CrossPlatformInputManager.GetAxis("Horizontal") * 1f;
         if (!TryGetTouchPosition(out Vector2 touchPosition))
             return;
 
@@ -82,16 +82,16 @@ public class PlaceOnPlane : MonoBehaviour
                 //1 -> and -1 <-
 
                 float moveHorizontal = -1f;
-                if (dir != "r")
+                /*if (dir != "r")
                 {
                     moveHorizontal = 1f;
                 }
                 else
                 {
                     moveHorizontal = -1f;
-                }
+                }*/
                 float moveVertical = 0f;
-                Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+                Vector3 movement = new Vector3(dirX, 0.0f, moveVertical);
 
                 //rb.AddForce(movement * speed);
                 spawnedObject.transform.Translate(movement * 1 * Time.deltaTime);
