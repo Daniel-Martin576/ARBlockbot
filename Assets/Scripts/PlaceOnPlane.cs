@@ -17,6 +17,13 @@ public class PlaceOnPlane : MonoBehaviour
     [Tooltip("Instantiates this prefab on a plane at the touch location.")]
     GameObject m_PlacedPrefab;
 
+    // anne
+    private static bool forwardDir;
+    private static bool backwardDir;
+    private static bool leftDir;
+    private static bool rightDir;
+    private static bool rotateL;
+
     public string dir
     {
         get { return "r"; }
@@ -35,6 +42,7 @@ public class PlaceOnPlane : MonoBehaviour
     /// The object instantiated as a result of a successful raycast intersection with a plane.
     /// </summary>
     public GameObject spawnedObject { get; private set; }
+    
 
     void Awake()
     {
@@ -64,6 +72,14 @@ public class PlaceOnPlane : MonoBehaviour
 
     void Update()
     {
+        forwardDir = onClick.forward;
+        backwardDir = onClick.backward;
+        leftDir = onClick.left;
+        rightDir = onClick.right;
+        rotateL = onClick.rotateL;
+
+        
+
         if (!TryGetTouchPosition(out Vector2 touchPosition))
             return;
 
@@ -76,25 +92,51 @@ public class PlaceOnPlane : MonoBehaviour
             if (spawnedObject == null)
             {
                 spawnedObject = Instantiate(m_PlacedPrefab, hitPose.position, hitPose.rotation);
+                
             }
             else
             {
                 //1 -> and -1 <-
 
-                float moveHorizontal = -1f;
-                if (dir != "r")
-                {
-                    moveHorizontal = 1f;
-                }
-                else
-                {
+                //anne
+                float moveHorizontal = 0.0f;
+                if (leftDir == true)
+                
+                {  
                     moveHorizontal = -1f;
                 }
+                if (rightDir == true)
+                {
+                    
+                    moveHorizontal = 1f;
+                   
+                }
+
                 float moveVertical = 0f;
+                if (forwardDir == true)
+                {
+                    moveVertical = 1f;
+                }
+
+                if (backwardDir == true)
+                {
+                    moveVertical = -1f;
+                }
+
                 Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
 
                 //rb.AddForce(movement * speed);
                 spawnedObject.transform.Translate(movement * 1 * Time.deltaTime);
+
+                if (rotateL == true)
+                {
+                    spawnedObject.transform.Rotate(0, 30, 0);
+                }
+
+
+                
+
+
                 //spawnedObject.transform.position = hitPose.position;
             }
         }

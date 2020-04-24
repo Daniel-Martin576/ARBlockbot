@@ -96,6 +96,8 @@ EditorBuildSettings:
     path: Assets/Scenes/SimpleAR/SimpleAR - Copy.unity
     guid: 4fafc9ee8c4e31840bd43256894f055f
   m_configObjects:
+    com.unity.xr.arcore.PlayerSettings: {fileID: 11400000, guid: 5e16ed61578ebaf4495b17ababc74cc9,
+      type: 2}
     com.unity.xr.arkit.PlayerSettings: {fileID: 11400000, guid: 2d5fb8e61571b4e3897f221189089fd6,
       type: 2}
     com.unity.xr.management.arcore_loader: {fileID: 11400000, guid: b0a3bae5d9c79d7478a9469fdab7a676,
