@@ -21,6 +21,7 @@ public class PlaceOnPlane : MonoBehaviour
     GameObject leftButton;
     */
     public float dirX;
+    public float dirY;
     /// <summary>
     /// The prefab to instantiate on touch.
     /// </summary>
@@ -64,6 +65,7 @@ public class PlaceOnPlane : MonoBehaviour
     void Update()
     {
         dirX = CrossPlatformInputManager.GetAxis("Horizontal") * 1f;
+        dirY = CrossPlatformInputManager.GetAxis("Vertical") * 1f;
         if (!TryGetTouchPosition(out Vector2 touchPosition))
             return;
 
@@ -81,21 +83,28 @@ public class PlaceOnPlane : MonoBehaviour
             {
                 //1 -> and -1 <-
 
-                float moveHorizontal = -1f;
-                /*if (dir != "r")
-                {
-                    moveHorizontal = 1f;
-                }
-                else
-                {
-                    moveHorizontal = -1f;
-                }*/
-                float moveVertical = 0f;
-                Vector3 movement = new Vector3(dirX, 0.0f, moveVertical);
+                if ((dirX == 1) ){
+                    
+                    spawnedObject.transform.Rotate(0f, 90f, 0f, Space.Self);
+                    dirY = 1;
 
-                //rb.AddForce(movement * speed);
-                spawnedObject.transform.Translate(movement * 1 * Time.deltaTime);
-                //spawnedObject.transform.position = hitPose.position;
+                    
+                }
+                else if (dirX == -1)
+                {
+                    spawnedObject.transform.Rotate(-0f, -90f, 0f, Space.Self);
+                    dirY = -1;
+
+                }
+                
+                    Vector3 movement = new Vector3(0f, 0.0f, dirY);
+
+                    //rb.AddForce(movement * speed);
+                    spawnedObject.transform.Translate(movement * 1 * Time.deltaTime);
+                    //spawnedObject.transform.position = hitPose.position;
+                
+
+                
             }
         }
     }

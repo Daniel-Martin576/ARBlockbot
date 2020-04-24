@@ -5733,6 +5733,7 @@ GameObject:
   - component: {fileID: 814098238}
   - component: {fileID: 814098237}
   - component: {fileID: 814098236}
+  - component: {fileID: 814098239}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -5839,6 +5840,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 814098234}
   m_CullTransparentMesh: 0
+--- !u!114 &814098239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 814098234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ab98b66288df7b4fa182075f2f12bd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axisName: Vertical
+  axisValue: 1
+  responseSpeed: 10000
+  returnToCentreSpeed: 10000
 --- !u!1 &815385523
 GameObject:
   m_ObjectHideFlags: 0
@@ -7035,6 +7052,7 @@ GameObject:
   - component: {fileID: 1029494862}
   - component: {fileID: 1029494861}
   - component: {fileID: 1029494860}
+  - component: {fileID: 1029494863}
   m_Layer: 5
   m_Name: Button (3)
   m_TagString: Untagged
@@ -7141,6 +7159,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1029494858}
   m_CullTransparentMesh: 0
+--- !u!114 &1029494863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1029494858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ab98b66288df7b4fa182075f2f12bd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axisName: Vertical
+  axisValue: -1
+  responseSpeed: 10000
+  returnToCentreSpeed: 10000
 --- !u!1 &1032953500
 GameObject:
   m_ObjectHideFlags: 0
@@ -9048,9 +9082,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d5359d5f13250e4485741ed685a32be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PlacedPrefab: {fileID: 1934569588295450, guid: b34b6c8f1206a6844b983e23b9da0441,
-    type: 3}
+  m_PlacedPrefab: {fileID: 100126, guid: d7222f7175ac71943b44f3d2f8ae3453, type: 3}
   dirX: 0
+  dirY: 0
 --- !u!114 &1335839539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12018,9 +12052,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: set_enabled
-        m_Mode: 6
+      - m_Target: {fileID: 1335839533}
+        m_MethodName: 
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
