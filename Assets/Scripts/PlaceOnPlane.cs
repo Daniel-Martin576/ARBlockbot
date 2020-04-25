@@ -113,10 +113,10 @@ public class PlaceOnPlane : MonoBehaviour
                 }
 
                 float moveVertical = 0f;
-                if (forwardDir == true)
-                {
-                    moveVertical = 1f;
-                }
+                //if (forwardDir == true)
+                //{
+                //    moveVertical = 1f;
+                //}
 
                 if (backwardDir == true)
                 {

@@ -10,6 +10,7 @@ namespace Valve.VR.InteractionSystem.Sample
 
         public Transform turret;
         float turretRot;
+        private static bool forwardDir;
 
 
         [Tooltip("Maximum steering angle of the wheels")]
@@ -71,6 +72,7 @@ namespace Valve.VR.InteractionSystem.Sample
 
         private void Start()
         {
+
             body = GetComponent<Rigidbody>();
             m_Wheels = GetComponentsInChildren<WheelCollider>();
 
@@ -111,6 +113,12 @@ namespace Valve.VR.InteractionSystem.Sample
 
         private void Update()
         {
+            forwardDir = onClick.forward;
+            if (forwardDir == true)
+            {
+                throttle = 0.5f;
+            }
+            
             m_Wheels[0].ConfigureVehicleSubsteps(criticalSpeed, stepsBelow, stepsAbove);
 
             //TurretInput();
