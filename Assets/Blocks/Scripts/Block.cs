@@ -1,184 +1,108 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.EventSystems;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class Block : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+namespace Blockly
 {
-    private GameObject trash;
-    private const float maxTrashDist = 1000f;
-
-    protected Connection[] myConnections;
-    private const float maxConnectionDist = 300.0f;
-    private Tuple<Connection, Connection> lastPotConnection;
-    private Transform OrigParent;
-
-    private Color[] beforeColors;
-
-
-    public void Start()
+    public class Block
     {
-        trash = GameObject.FindGameObjectWithTag("Trash");
-        myConnections = this.gameObject.GetComponentsInChildren<Connection>();
-        OrigParent = transform.parent;
+        public string name;
+        public List<Input> inputs;
+        public List<Connection> connections;
+        public Color color;
+        public bool inline;
 
-    }
+        private bool[] whereInline;
 
-    public Connection[] getConnections()
-    {
-        return myConnections;
-    }
-
-    private Tuple<Connection, Connection> findPotentialConnections()
-    {
-        Connection myHighestPotenital = null;
-        Connection othHighestPotenital = null;
-        float minDistance = maxConnectionDist;
-
-        GameObject[] blocksObjects = GameObject.FindGameObjectsWithTag("Block");
-
-        foreach(GameObject blocksObject in blocksObjects)
+        public Block(string name)
         {
-            if (blocksObject != this.gameObject)
-            {
-                Connection[] othConnections = blocksObject.GetComponent<Block>().getConnections();
-                foreach (Connection othConnection in othConnections)
+            this.name = name;
+            inputs = new List<Input>();
+            connections = new List<Connection>();
+            inline = true;
+        }
+
+        public Input appendValueInput(string name)
+        {
+            Input input = new Input(Input.Category.Value, name);
+            inputs.Add(input);
+            return input;
+        }
+
+        public Input appendDummyInput()
+        {
+            Input input = new Input(Input.Category.Dummy, null);
+            inputs.Add(input);
+            return input;
+        }
+
+        public Input appendStatementInput(string name)
+        {
+            Input input = new Input(Input.Category.Statement, name);
+            inputs.Add(input);
+            return input;
+        }
+
+        public void setOutput(bool _, string[] str) => connections.Add(new Connection(Connection.Category.Output, str));
+        public void setPreviousStatement(bool _, string[] str) => connections.Add(new Connection(Connection.Category.Prev, str));
+        public void setNextStatement(bool _, string[] str) => connections.Add(new Connection(Connection.Category.Next, str));
+
+        public void setColour(float H) => color = Color.HSVToRGB(H / 360.0f, 1.0f, 1.0f, false);
+        public void setColour(float H, float S, float V) => color = Color.HSVToRGB(H, S, V, false);
+
+        public void setInputsInline(bool inline) => this.inline = inline;
+
+        public void setTooltip(string str) { }
+        public void setHelpUrl(string str) { }
+
+        public void build(Transform transform) => new BlockFactory(this, transform);
+
+
+
+        // ~~~~~~ Helper Functions ~~~~~~
+        private bool[] builcWhereInline()
+        {
+            bool currInline = false;
+            bool[] isInline = new bool[inputs.Count];
+
+            for (int i = 0; i < inputs.Count; i++)
+            {   
+                if (currInline && inputs[i].category != Input.Category.Statement)
+                    isInline[i] = true;
+                else if (inputs[i].category == Input.Category.Statement)
+                    isInline[i] = false;
+                if (!currInline && inputs[i].category == Input.Category.Dummy)
                 {
-                    foreach (Connection myConnection in myConnections)
+                    int j = i;
+                    while (j >= 0)
                     {
-                        if (Connection.canConnect(myConnection, othConnection))
-                        {
-                            float dist = (myConnection.transform.position - othConnection.transform.position).sqrMagnitude;
-                            if (dist < minDistance)
-                            {
-                                myHighestPotenital = myConnection;
-                                othHighestPotenital = othConnection;
-                                minDistance = dist;
-                            }
-                        }
+                        if (inputs[j].category != Input.Category.Statement)
+                            isInline[j] = true;
+                        else break;
+                        j--;
                     }
                 }
+                currInline = isInline[i];
             }
+            return isInline;
         }
 
-        return Tuple.Create(myHighestPotenital, othHighestPotenital);
-    }
-
-    private void connect(Connection myCon, Connection othCon)
-    {
-        Vector3 offset = othCon.transform.position - myCon.transform.position;
-        transform.position = transform.position + offset;
-        if (myCon.authority == Connection.Authority.Leader)
-            othCon.transform.parent.SetParent(transform);
-        else
-            transform.SetParent(othCon.transform.parent);
-        myCon.join(othCon);
-        othCon.join(myCon);
-    }
-
-    public void OnBeginDrag(PointerEventData data)
-    {
-        // Color
-        Image[] images = this.gameObject.GetComponentsInChildren<Image>();
-        beforeColors = new Color[images.Length];
-
-        for (int i = 0; i < images.Length; i++)
+        public bool isInline(int index)
         {
-            beforeColors[i] = images[i].color;
-
-            float H, S, V;
-            Color.RGBToHSV(images[i].color, out H, out S, out V);
-            Color lightColor = Color.HSVToRGB(H, S - .2f, V + .2f, false);
-            lightColor.a = images[i].color.a;
-            images[i].color = lightColor;
+            if (!inline) return false;
+            if (whereInline == null) whereInline = builcWhereInline();
+            return whereInline[index];
         }
 
-        // Unlink
-        foreach (Connection myCon in myConnections)
+        public bool isDoubleStatementInput(int index)
         {
-            if (myCon.linked() && myCon.authority == Connection.Authority.Follower)
-            {
-                transform.SetParent(OrigParent);
-                myCon.getLinkedTo().unjoin();
-                myCon.unjoin();
-            }
+            return inputs[index].category == Input.Category.Statement 
+                && index + 1 < inputs.Count 
+                && inputs[index + 1].category == Input.Category.Statement;
         }
 
-        lastPotConnection = Tuple.Create<Connection, Connection>(null, null);
+
+
+
     }
-
-    public void OnDrag(PointerEventData data)
-    {
-        // Movement
-        transform.position = Input.mousePosition;
-
-        // Trash
-        this.checkIfOnTrash();
-
-        // Highlight
-        Tuple<Connection, Connection> potConnections = findPotentialConnections();
-        if (potConnections.Item2 != lastPotConnection.Item2)
-        {
-            if (lastPotConnection.Item2 != null)
-                lastPotConnection.Item2.unhighlight();
-            if (potConnections.Item2 != null)
-                potConnections.Item2.highlight();
-        }
-        lastPotConnection = potConnections;
-    }
-
-    public void OnEndDrag(PointerEventData data)
-    {
-        // Trash
-        if (this.checkIfOnTrash())
-        {
-            Destroy(this.gameObject);
-            trash.GetComponent<Image>().sprite = trash.GetComponent<Button>().spriteState.selectedSprite;
-        }
-
-        // Color
-        Image[] images = this.gameObject.GetComponentsInChildren<Image>();
-        for (int i = 0; i < images.Length; i++)
-        {
-            images[i].color = beforeColors[i];
-        }
-
-        // Link 
-        if (lastPotConnection.Item2 != null)
-        {
-            lastPotConnection.Item2.unhighlight();
-            this.connect(lastPotConnection.Item1, lastPotConnection.Item2);
-        }
-    }
-
-    public bool checkIfOnTrash()
-    {
-        bool closeEnough = (trash.transform.position - transform.position).sqrMagnitude < maxTrashDist;
-        // Kinda hacky; disabledSprite = Open Trash Sprite, selectedSprite = Close Trash Sprite
-        if (closeEnough)
-            trash.GetComponent<Image>().sprite = trash.GetComponent<Button>().spriteState.disabledSprite;
-        else
-            trash.GetComponent<Image>().sprite = trash.GetComponent<Button>().spriteState.selectedSprite;
-
-        return closeEnough;
-    }
-
-    public Connection getConnectionType(Connection.Type type)
-    {
-        foreach (Connection myCon in myConnections)
-        {
-            if (myCon.type == type && myCon.linked())
-            {
-                return myCon;
-            }
-        }
-        return null;
-    }
-
-    // public abstract void execute();
-
-    public virtual void execute() { }
-    public virtual object getReturn() => null;
 }

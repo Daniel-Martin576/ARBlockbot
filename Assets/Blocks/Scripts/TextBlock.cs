@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TextBlock : Block
+public class TextBlock : BlockObject
 {
     private const float rectBuffer = 40;
     private const float boxBuffer = 15;
@@ -24,12 +24,12 @@ public class TextBlock : Block
         inputField = this.gameObject.GetComponentInChildren<InputField>();
         startingWidth = CalculateLengthOfMessage(inputField.textComponent, inputField.text);
 
-        InputRectTran = inputField.GetComponentInParent<RectTransform>();
-        inputRect = InputRectTran.sizeDelta;
+        //InputRectTran = inputField.GetComponentInParent<RectTransform>();
+        //inputRect = InputRectTran.sizeDelta;
         
 
-        BoxRectTran = this.gameObject.GetComponentInChildren<ExtendMe>().GetComponentInParent<RectTransform>();
-        boxRect = BoxRectTran.sizeDelta;
+        //BoxRectTran = this.gameObject.GetComponentInChildren<ExtendMe>().GetComponentInParent<RectTransform>();
+        //boxRect = BoxRectTran.sizeDelta;
 
         resizeBox();
     }
@@ -38,24 +38,29 @@ public class TextBlock : Block
     public void resizeBox()
     {
         float prefWidth = CalculateLengthOfMessage(inputField.textComponent, inputField.text);
-        float width = (inputRect.x - rectBuffer) * System.Math.Max(prefWidth / startingWidth, 1) + rectBuffer;
+        //print(prefWidth);
+       // float width = (inputRect.x - rectBuffer) * System.Math.Max(prefWidth / startingWidth, 1) + rectBuffer;
 
-        InputRectTran.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, boxBuffer, width);
-        BoxRectTran.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, width + 2 * boxBuffer);
+        //InputRectTran.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, boxBuffer, width);
+        //BoxRectTran.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, width + 2 * boxBuffer);
     }
 
     private int CalculateLengthOfMessage(Text chatText, string message)
     {
         int totalLength = 0;
+
         Font myFont = chatText.font;  //chatText is my Text component
         CharacterInfo characterInfo = new CharacterInfo();
+
         char[] arr = message.ToCharArray();
 
         foreach (char c in arr)
         {
             myFont.GetCharacterInfo(c, out characterInfo, chatText.fontSize);
+
             totalLength += characterInfo.advance;
         }
+
         return totalLength;
     }
 

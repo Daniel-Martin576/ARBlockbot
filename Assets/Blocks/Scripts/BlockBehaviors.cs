@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BlockBehaviors : Block
+public class BlockBehaviors : BlockObject
 {
     // Kinda don't want to seperate blocks into invidiual classes yet, because they will only be overriding one function ("execute")
     // So just go to do FLYWEIGHT Design Pattern (kind) and enum the hell out of it 
@@ -15,7 +15,7 @@ public class BlockBehaviors : Block
         Nothing, Print, TextBox, IF
 
     }
-
+    /*
     public override void execute()
     {
         Connection executeCon;
@@ -58,5 +58,7 @@ public class BlockBehaviors : Block
 
         return check;
     }
+
+    */
 }
 
