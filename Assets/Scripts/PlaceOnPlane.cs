@@ -128,10 +128,10 @@ public class PlaceOnPlane : MonoBehaviour
                 //rb.AddForce(movement * speed);
                 spawnedObject.transform.Translate(movement * 1 * Time.deltaTime);
 
-                if (rotateL == true)
-                {
-                    spawnedObject.transform.Rotate(0, 30, 0);
-                }
+                //if (rotateL == true)
+                //{
+                //    spawnedObject.transform.Rotate(0, 30, 0);
+                //}
 
 
                 
