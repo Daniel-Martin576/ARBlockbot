@@ -11,6 +11,11 @@ namespace Valve.VR.InteractionSystem.Sample
         public Transform turret;
         float turretRot;
         private static bool forwardDir;
+        private static bool backwardDir;
+        private static bool leftDir;
+        private static bool rightDir;
+        private static bool rotateL;
+
 
 
         [Tooltip("Maximum steering angle of the wheels")]
@@ -113,12 +118,48 @@ namespace Valve.VR.InteractionSystem.Sample
 
         private void Update()
         {
+
             forwardDir = onClick.forward;
+            backwardDir = onClick.backward;
+            leftDir = onClick.left;
+            rightDir = onClick.right;
+            rotateL = onClick.rotateL;
+
             if (forwardDir == true)
             {
-                throttle = 0.5f;
+                throttle = 0.1f;
             }
-            
+
+            else if (backwardDir == true)
+            {
+                throttle = -0.1f;
+           
+            }
+            else if (leftDir == true)
+            {
+                steer = Vector2.left;
+                throttle = 0.1f;
+               
+            }
+            else if (rightDir == true)
+            {
+                steer = Vector2.right;
+                throttle = 0.1f;
+               
+            }
+            else
+            {
+          
+                throttle = 0f;
+            }
+
+            //if (rightDir == true)
+            //{
+            //    steer = 0.1f;
+            //}
+
+
+
             m_Wheels[0].ConfigureVehicleSubsteps(criticalSpeed, stepsBelow, stepsAbove);
 
             //TurretInput();

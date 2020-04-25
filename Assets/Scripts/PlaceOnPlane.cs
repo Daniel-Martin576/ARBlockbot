@@ -100,17 +100,17 @@ public class PlaceOnPlane : MonoBehaviour
 
                 //anne
                 float moveHorizontal = 0.0f;
-                if (leftDir == true)
+                //if (leftDir == true)
                 
-                {  
-                    moveHorizontal = -1f;
-                }
-                if (rightDir == true)
-                {
+                //{  
+                //    moveHorizontal = -1f;
+                //}
+                //if (rightDir == true)
+                //{
                     
-                    moveHorizontal = 1f;
+                //    moveHorizontal = 1f;
                    
-                }
+                //}
 
                 float moveVertical = 0f;
                 //if (forwardDir == true)
@@ -118,10 +118,10 @@ public class PlaceOnPlane : MonoBehaviour
                 //    moveVertical = 1f;
                 //}
 
-                if (backwardDir == true)
-                {
-                    moveVertical = -1f;
-                }
+                //if (backwardDir == true)
+                //{
+                //    moveVertical = -1f;
+                //}
 
                 Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
 
