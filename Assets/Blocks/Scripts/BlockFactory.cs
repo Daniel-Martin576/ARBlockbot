@@ -9,12 +9,10 @@ namespace Blockly
     {
         private const float LAYER_HEIGHT = 30;
         private const float LAYER_WIDTH = 15;
-        private float total_width;
 
         private Block block;
         private Transform transform;
         private GameObject blockObj;
-        private GameObject[,] spine;
 
         private Dictionary<Connection, GameObject> connectionDict;
         private List<List<GameObject>> rowLists;
@@ -34,42 +32,41 @@ namespace Blockly
             blockObj = makeObject(block.name, transform);
             blockObj.AddComponent<GraphicRaycaster>();
             blockObj.tag = "Block";
-
-
-
-
-            //makeSpine();
-
             BlockObject blockObject = blockObj.AddComponent<BlockObject>();
-            // blockObject.addConnections(connectionDict);
-
-            // Fields!!!!!!!!!!!!
 
             int row = 0;
             int i = 0;
             foreach (Input input in block.inputs)
             {
-                if (row == rowLists.Count) rowLists.Add(new List<GameObject>{makeUnitSquare(getNextPosition(true))});
-
+                if (row == rowLists.Count) rowLists.Add(new List<GameObject>{ makeParentedBox(getNextPosition(true), "Extender")});
+                
                 foreach (Field field in input.fields)
                     addField(field); // call default adds getNextPosition(false)
 
-                if (block.isInline(i))
+                if (block.isInline(i)) {
                     addInlineConnection(input);
+                    if (i + 1 < block.inputs.Count && !block.isInline(i + 1)) {
+                        addExtender();
+                        row++;
+                    }
+                }
                 else {
-                    addExtender();
                     addExternalConnection(input);  //With Highlight, add in dict
                     row++;
                 }
-
-                if (block.isDoubleStatementInput(i)) {
+                
+                if (block.inputNeedsFloor(i)) {
                     addDummyRow();
                     row++;
                 }
 
                 i++;
             }
+            addMainConnections();
 
+            adjustSize();
+
+            blockObject.addConnections(connectionDict);
 
             // Excute!!!!!!!!!!!!
         }
@@ -88,9 +85,11 @@ namespace Blockly
             return obj;
         }
 
-        private GameObject makeUnitSquare(Vector3 localPosition, string name = "UnitBlock", string spriteName = "Square", bool highlight = false)
+        private GameObject makeUnitSquare(Vector3 localPosition, Transform parentTransfrom) => makeUnitSquare(localPosition, "UnitBlock", "Square", false, parentTransfrom);
+        private GameObject makeUnitSquare(Vector3 localPosition, string name = "UnitBlock", string spriteName = "Square", bool highlight = false, Transform parentTransfrom = null)
         {
-            GameObject square = makeObject(name, blockObj.transform, localPosition); // Hope same name doesn't break anything
+            if (parentTransfrom == null) parentTransfrom = blockObj.transform;
+            GameObject square = makeObject(name, parentTransfrom, localPosition); // Hope same name doesn't break anything
             Image image = square.AddComponent<Image>();
             RectTransform rect = image.gameObject.GetComponent<RectTransform>();
             rect.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
@@ -107,7 +106,7 @@ namespace Blockly
             {
                 if (!newLine && row == rowLists[rowLists.Count - 1]) break;
                 RectTransform r = row[0].GetComponent<RectTransform>();
-                total_height += (r == null) ? LAYER_HEIGHT : r.rect.width;
+                total_height += (r == null) ? LAYER_HEIGHT : r.rect.height;
             }
 
             if (!newLine)
@@ -116,14 +115,15 @@ namespace Blockly
                     RectTransform r = obj.GetComponent<RectTransform>();
                     total_width += (r == null) ? LAYER_WIDTH : r.rect.width;
                 }
-
+        
             return new Vector3(total_width, -total_height, 0);
         }
 
         private void addDummyRow()
         {
-            rowLists.Add(new List<GameObject> { makeUnitSquare(getNextPosition(true), "AnchorDummy") });
-            rowLists[rowLists.Count - 1].Add(makeUnitSquare(getNextPosition(false), "Dummy"));
+            rowLists.Add(new List<GameObject> { makeParentedBox(getNextPosition(true), "Extender") });
+            rowLists[rowLists.Count - 1].Add(makeParentedBox(getNextPosition(false), "Extender"));
+
         }
 
         private void addSprite(GameObject obj, string spriteName, bool highlight = false)
@@ -138,41 +138,48 @@ namespace Blockly
         private void addInlineConnection(Input input)
         {
             Vector3 localPosition = getNextPosition(false);
-            GameObject obj;
 
-            if (input.category != Input.Category.Dummy)
+            if (input.category == Input.Category.Value)
             {
-                obj = makeUnitSquare(localPosition, "InlineConnection", "HorzFemale");
+                GameObject obj = makeUnitSquare(localPosition, "InlineConnection", "HorzFemale");
                 connectionDict.Add(input.connection, makeUnitSquare(localPosition, "Highlight", "VertHigh", true));
-            } else
-                obj = makeUnitSquare(localPosition, "InlineConnection", "Square");
-
-            rowLists[rowLists.Count - 1].Add(obj);
-
-            if (input.category != Input.Category.Dummy)
+                rowLists[rowLists.Count - 1].Add(obj);
                 rowLists[rowLists.Count - 1].Add(makeUnitSquare(getNextPosition(false), "Opening", "OpenSquare"));
+            }
         }
 
         private void addExternalConnection(Input input)
-        {
+        {   
             GameObject obj;
-            Vector3 localPosition = getNextPosition(false);
-            if (input.category == Input.Category.Statement)
-                obj = makeUnitSquare(localPosition, "Connection", "VertMale");
-            else if (input.category == Input.Category.Value)
-                obj = makeUnitSquare(localPosition, "Connection", "HorzFemale");
-            else
-                obj = makeUnitSquare(localPosition, "Connection", "Square");
 
-            if (input.category != Input.Category.Dummy)
+            if (input.category == Input.Category.Statement) {
+                Vector3 localPosition = getNextPosition(false);
+                obj = makeUnitSquare(localPosition, "StatementEndConnection", "VertMale");
                 connectionDict.Add(input.connection, makeUnitSquare(localPosition, "Highlight", "VertHigh", true));
-
-            rowLists[rowLists.Count - 1].Add(obj);
+                rowLists[rowLists.Count - 1].Add(obj);
+            } else if (input.category == Input.Category.Value) {
+                addExtender();
+                Vector3 localPosition = getNextPosition(false);
+                obj = makeUnitSquare(localPosition, "ValueEndConnection", "HorzFemale");
+                connectionDict.Add(input.connection, makeUnitSquare(localPosition, "Highlight", "HorzHigh", true));
+                rowLists[rowLists.Count - 1].Add(obj);
+            } else
+                addExtender();
         }
 
         private void addExtender()
         {
-            rowLists[rowLists.Count - 1].Add(makeUnitSquare(getNextPosition(false), "Extender"));
+            rowLists[rowLists.Count - 1].Add(makeParentedBox(getNextPosition(false), "Extender"));
+        }
+
+        private GameObject makeParentedBox(Vector3 localPosition, string name = "UnitBlock")
+        {
+            GameObject parentRect = makeObject(name, blockObj.transform, localPosition);
+            RectTransform r = parentRect.AddComponent<RectTransform>();
+            r.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
+
+            GameObject square = makeUnitSquare(new Vector3(0, 0, 0), parentRect.transform);
+            return parentRect;
         }
 
         private void addField(Field field)
@@ -192,13 +199,13 @@ namespace Blockly
             RectTransform r = parentRect.AddComponent<RectTransform>();
             r.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
 
-            GameObject fieldSquare = makeUnitSquare(new Vector3(0, 0, 0));
+            GameObject fieldSquare = makeUnitSquare(new Vector3(0, 0, 0), parentRect.transform);
             fieldSquare.transform.SetParent(parentRect.transform);
 
             GameObject fieldObj = makeObject("Field", parentRect.transform, new Vector3(0, 0, 0));
 
             Text text = fieldObj.AddComponent<Text>();
-            text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            text.font = Resources.Load<Font>("Anonymous_Pro");
             text.fontSize = 50;
             text.horizontalOverflow = HorizontalWrapMode.Overflow;
             text.verticalOverflow = VerticalWrapMode.Overflow;
@@ -207,162 +214,115 @@ namespace Blockly
             text.color = new Color(0, 0, 0);
             text.supportRichText = false;
 
-            int width = CalculateLengthOfMessage(text, text.text);
+            float shrink = .3f;
+            float magic_size = 8.2f;
+            float width = str.Length * magic_size;
 
+           
             RectTransform rect = text.gameObject.GetComponent<RectTransform>();
             rect.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
-            rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, (float)width / 2);
-            rect.localScale = new Vector3(.5f, .5f, 0f);
+            rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, width);
+            rect.localScale = new Vector3(shrink, shrink, 0f);
 
-            float afterFieldGap = 0;
+            float afterFieldGap = 5;
             RectTransform rect1 = fieldSquare.GetComponent<RectTransform>();
             rect1.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
-            rect1.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, (float)width / 2 + afterFieldGap);
+            rect1.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, width + afterFieldGap);
 
+            r.transform.position = new Vector3(r.transform.position.x + (rect1.sizeDelta.x - r.sizeDelta.x) / 2, r.transform.position.y, r.transform.position.z);
+            r.sizeDelta = rect1.sizeDelta;
 
-           // r.transform.position.Set(r.transform.position.x + (rect1.sizeDelta.x - r.sizeDelta.x) / 2, r.transform.position.y, r.transform.position.z);
-            //r.sizeDelta = rect1.sizeDelta;
-
-            return fieldObj;
+            return parentRect;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-        private GameObject makeSquare(int r, int c, string spriteName, string name = "Square", bool hide = false)
+        private void addMainConnections()
         {
-            GameObject square = makeObject($"{name}_{r}_{c}", blockObj.transform, new Vector3(c * LAYER_WIDTH, -r * LAYER_HEIGHT, 0));
-            Image image = square.AddComponent<Image>();
-            RectTransform rect = image.gameObject.GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
-
-            image.sprite = Resources.Load<Sprite>(spriteName);
-            image.color = block.color;
-            if (hide)
-                image.color = new Color(1f, 1f, 0f, 0f);
-
-            return square;
-        }
-
-
-        private void makeSpine()
-        {
-            connectionDict = new Dictionary<Connection, GameObject>();
-            spine = new GameObject[block.inputs.Count,2];
-            int row = 0;
-            for (int i = 0; i < block.inputs.Count; i++, row++)
+            foreach (Connection connection in block.connections)
             {
-                spine[i, 0] = makeSquare(row, 0, "Square");
-                switch (block.inputs[i].category)
+                if (connection.category == Connection.Category.Prev)
                 {
-                    case Input.Category.Value:
-                        spine[i, 1] = makeSquare(row, 1, "HorzFemale");
-                        connectionDict.Add(block.inputs[i].connection, makeSquare(row, 1, "HorzHigh", "Highlight", true));
-                        break;
-                    case Input.Category.Dummy:
-                        spine[i, 1] = makeSquare(row, 1, "Square");
-                        break;
-                    case Input.Category.Statement:
-                        spine[i, 1] = makeSquare(row, 1, "VertMale");
-                        connectionDict.Add(block.inputs[i].connection, makeSquare(row, 1, "VertHigh", "Highlight", true));
-                        if (((i + 1 < block.inputs.Count - 1) && block.inputs[i + 1].category == Input.Category.Statement)
-                            || (i == block.inputs.Count - 1))
-                        {
-                            row++;
-                            makeSquare(row, 0, "Square");
-                            makeSquare(row, 1, "Square");
-                        }
-                        break;
+                    rowLists[0][0].GetComponentInChildren<Image>().sprite = Resources.Load<Sprite>("VertFemale");
+                    connectionDict.Add(connection, makeUnitSquare(new Vector3(0,0,0), "Highlight", "VertHigh", true));
                 }
-            }
-
-            foreach(Connection connection in block.connections)
-            {
-                if (connection.category == Connection.Category.Output) {
-                    makeSquare(0, -1, "HorzMale");
-                    connectionDict.Add(connection, makeSquare(0, -1, "HorzHigh", "Highlight", true));
-                } else if (connection.category == Connection.Category.Prev) {
-                    spine[0, 0].GetComponent<Image>().sprite = Resources.Load<Sprite>("VertFemale");
-                    connectionDict.Add(connection, makeSquare(0, 0, "VertHigh", "Highlight", true));
-                } else if (connection.category == Connection.Category.Next) {
-                    makeSquare(row, 0, "VertMale");
-                    connectionDict.Add(connection, makeSquare(row, 0, "VertHigh", "Highlight", true));
+                else if (connection.category == Connection.Category.Next)
+                {
+                    Vector3 localPostion = getNextPosition(true);
+                    makeUnitSquare(localPostion, "Next", "VertMale");
+                    connectionDict.Add(connection, makeUnitSquare(localPostion, "Highlight", "VertHigh", true));
+                } else if (connection.category == Connection.Category.Output)
+                {
+                    makeUnitSquare(new Vector3(-LAYER_WIDTH, 0, 0), "Next", "HorzMale");
+                    connectionDict.Add(connection, makeUnitSquare(new Vector3(-LAYER_WIDTH,0,0), "Highlight", "HorzHigh", true));
                 }
             }
         }
 
-
-
-
-
-        private GameObject makeField(int i, int f, Transform parentTransfrom, Field field)
+        private void adjustSize()
         {
-            // Add parent rect........ then make child
-            GameObject parentRect = makeObject($"KingRect_{i}_{f}", parentTransfrom, new Vector3(0, 0, 0));
-            RectTransform r = parentRect.AddComponent<RectTransform>();
-            r.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
-            GameObject fieldSquare = makeObject($"FieldSquare_{i}_{f}", parentRect.transform, new Vector3(0, 0, 0));
-            GameObject fieldObj = makeObject($"Field_{i}_{f}", parentRect.transform, new Vector3(0, 0, 0));
-
-            Text text = fieldObj.AddComponent<Text>();
-            text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-            text.fontSize = 50;
-            text.horizontalOverflow = HorizontalWrapMode.Overflow;
-            text.verticalOverflow = VerticalWrapMode.Overflow;
-            text.alignment = TextAnchor.MiddleCenter;
-            text.text = "Start";
-            text.color = new Color(0, 0, 0);
-            text.supportRichText = false;
-
-            int width = CalculateLengthOfMessage(text, text.text);
-            Debug.Log(width);
-
-            RectTransform rect = text.gameObject.GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
-            rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, (float) width / 2);
-            rect.localScale = new Vector3(.5f, .5f, 0f);
+            float max_width1 = 0f;
+            float max_width2 = 0f;
+            // total_height = 0;
 
 
-            Image image = fieldSquare.AddComponent<Image>();
-            RectTransform rect1 = image.gameObject.GetComponent<RectTransform>();
-            rect1.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
-
-            image.sprite = Resources.Load<Sprite>("Square");
-            image.color = block.color;
-            rect1.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, (float)width / 2);
-
-            //ughhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-
-            return fieldObj;
-        }
-
-        private int CalculateLengthOfMessage(Text chatText, string message)
-        {
-            int totalLength = 0;
-            Font myFont = chatText.font;  //chatText is my Text component
-            CharacterInfo characterInfo = new CharacterInfo();
-            char[] arr = message.ToCharArray();
+            bool[] rowShort = new bool[rowLists.Count];
+            float[] rowWidth = new float[rowLists.Count];
             int i = 0;
-            foreach (char c in arr)
+            // Calculate
+            foreach (List<GameObject> row in rowLists)
             {
-                myFont.GetCharacterInfo(c, out characterInfo, chatText.fontSize);
-                totalLength += characterInfo.advance;
-                if (i == arr.Length - 1)
+                float width = 0;
+                foreach (GameObject obj in row)
                 {
-                    totalLength += characterInfo.glyphWidth/2;
+                    RectTransform r = obj.GetComponent<RectTransform>();
+                    width += (r == null) ? LAYER_WIDTH : r.rect.width;
+                }
+
+                if (rowShort[i] = (row[row.Count - 1].name == "StatementEndConnection"))
+                    if (width > max_width1)
+                        max_width1 = width;
+                if (width > max_width2)
+                    max_width2 = width;
+
+                rowWidth[i] = width;
+                i++;
+            }
+
+            i = 0;
+            foreach (List<GameObject> row in rowLists)
+            {
+                Debug.Log(rowShort[i]);
+                if (rowShort[i] && row[0].name == "Extender")
+                {
+                    RectTransform rect = row[0].transform.GetChild(0).gameObject.GetComponent<RectTransform>();
+                    rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, LAYER_WIDTH + (max_width1 - rowWidth[i]));
+                    int j = 0;
+                    foreach (GameObject obj in row) 
+                        if (j++ != 0)
+                            obj.transform.position = obj.transform.position + new Vector3((max_width1 - rowWidth[i]), 0, 0);  
+                }
+                else
+                {
+                    GameObject obj = null;
+                    if (row.Count - 1 >= 0 && row[row.Count - 1].name == "Extender")
+                        obj = row[row.Count - 1];
+                    else if (row.Count - 2 >= 0 && row[row.Count - 2].name == "Extender")
+                    {
+                        obj = row[row.Count - 2];
+                        row[row.Count - 1].transform.position = row[row.Count - 1].transform.position + new Vector3((max_width2 - rowWidth[i]), 0, 0);
+                    }
+                    
+
+                    if (obj != null)
+                    {
+                        RectTransform rect = obj.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
+                        rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, LAYER_WIDTH + (max_width2 - rowWidth[i]));
+                    }
+                            
                 }
                 i++;
             }
-            return totalLength;
+            
         }
+
     }
 }

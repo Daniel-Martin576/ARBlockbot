@@ -1,28 +1,35 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Blockly 
+namespace Blockly
 {
     public class BlockLibrary : MonoBehaviour
     {
+
+      public void Start() {
+        createStartBlock();
+      }
+
         public void createStartBlock()
         {
 
             Block block = new Block("StartBlock");
             block.appendDummyInput()
-                .appendField("Start")
-                .appendField(new Blockly.FieldLabelSerializable("lol"), "NAME");
-            block.appendValueInput("NAME")
-                .setCheck(null);
-            block.appendStatementInput("NAME")
-                .setCheck(null);
-            block.setPreviousStatement(true, null);
+                .appendField("Start");
             block.setNextStatement(true, null);
-            block.setOutput(true, null);
             block.setColour(165);
+            block.setInputsInline(false);
+            // block.function = delegate (object o) {
+            //     return block.connections[0].parentBlock.function(null);
+            // };
+
             block.build(transform);
+
         }
+
+
 
         public void createRandomBlock()
         {

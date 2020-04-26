@@ -12,21 +12,23 @@ namespace Blockly
         public string name;
         public Connection connection;
         public List<Field> fields;
+        public Block parentBlock;
         public enum Category { Value, Dummy, Statement }
 
-        public Input(Category category, string name)
+        public Input(Category category, string name, Block parentBlock)
         {
             this.category = category;
             this.name = name;
+            this.parentBlock = parentBlock;
             fields = new List<Field>();
         }
 
         public Input setCheck(string[] str)
         {
             if (category == Category.Value)
-                connection = new Connection(Connection.Category.Input, str);
+                connection = new Connection(Connection.Category.Input, str, parentBlock);
             else if (category == Category.Statement)
-                connection = new Connection(Connection.Category.Next, str);
+                connection = new Connection(Connection.Category.Next, str, parentBlock);
             return this;
         }
 

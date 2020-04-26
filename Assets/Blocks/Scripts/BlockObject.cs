@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using Blockly;
 
 // Trash, re work
-public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerClickHandler
 {
     private GameObject trash;
     private const float maxTrashDist = 1000f;
@@ -16,6 +16,7 @@ public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     private const float maxConnectionDist = 300.0f;
     private Tuple<Connection, Connection, BlockObject> lastPotConnection;
     private Transform OrigParent;
+    private Block parentBlock;
 
     private Color[] beforeColors;
 
@@ -35,6 +36,11 @@ public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         myConnections = new List<Connection>(connectionDict.Keys).ToArray();
     }
 
+    public void addParentBlock(Block parentBlock)
+    {
+        this.parentBlock = parentBlock; 
+    }
+
     public Connection[] getConnections()
     {
         return myConnections;
@@ -47,6 +53,7 @@ public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         BlockObject b = null;
         float minDistance = maxConnectionDist;
 
+
         GameObject[] blocksObjects = GameObject.FindGameObjectsWithTag("Block");
 
         foreach(GameObject blocksObject in blocksObjects)
@@ -54,8 +61,10 @@ public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
             if (blocksObject != this.gameObject)
             {
                 Connection[] othConnections = blocksObject.GetComponent<BlockObject>().getConnections();
+                
                 foreach (Connection othConnection in othConnections)
                 {
+                    print(othConnection);
                     foreach (Connection myConnection in myConnections)
                     {
                         if (Connection.canConnect(myConnection, othConnection))
@@ -181,4 +190,9 @@ public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     public virtual void execute() { }
     public virtual object getReturn() => null;
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        
+    }
 }

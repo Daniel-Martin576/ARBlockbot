@@ -10,6 +10,7 @@ namespace Blockly
         public Type[] types;
         public bool lead;
         public Connection pair;
+        public Block parentBlock;
 
         private bool vert;
 
@@ -23,7 +24,7 @@ namespace Blockly
                 case ("Boolean"): return Type.Boolean;
                 case ("Number"): return Type.Number;
                 case ("String"): return Type.String;
-                case ("Array"): return Type.Array;
+                //case ("Array"): return Type.Array;
                 default: throw new System.FormatException();
             }
         }
@@ -41,13 +42,14 @@ namespace Blockly
         }
 
 
-        public Connection(Category category, string[] typesStr)
+        public Connection(Category category, string[] typesStr, Block parentBlock)
         {
             this.category = category;
             types = stringsToTypeList(typesStr);
             lead = (category == Category.Next || category == Category.Input);
             vert = (category == Category.Next || category == Category.Prev);
             pair = null;
+            this.parentBlock = parentBlock;
         }
 
         static public bool canConnect(Connection con1, Connection con2)
@@ -76,5 +78,6 @@ namespace Blockly
         public void join(Connection con) => pair = con;
         public void unjoin() => pair = null;
         public bool linked() => pair != null;
+        public Block connectedBlock() => pair.parentBlock;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace Blockly
         public List<Connection> connections;
         public Color color;
         public bool inline;
+        public Func<object, object> function;
 
         private bool[] whereInline;
 
@@ -20,32 +22,33 @@ namespace Blockly
             inputs = new List<Input>();
             connections = new List<Connection>();
             inline = true;
+            function = delegate (object o) { return null; };
         }
 
         public Input appendValueInput(string name)
         {
-            Input input = new Input(Input.Category.Value, name);
+            Input input = new Input(Input.Category.Value, name, this);
             inputs.Add(input);
             return input;
         }
 
         public Input appendDummyInput()
         {
-            Input input = new Input(Input.Category.Dummy, null);
+            Input input = new Input(Input.Category.Dummy, null, this);
             inputs.Add(input);
             return input;
         }
 
         public Input appendStatementInput(string name)
         {
-            Input input = new Input(Input.Category.Statement, name);
+            Input input = new Input(Input.Category.Statement, name, this);
             inputs.Add(input);
             return input;
         }
 
-        public void setOutput(bool _, string[] str) => connections.Add(new Connection(Connection.Category.Output, str));
-        public void setPreviousStatement(bool _, string[] str) => connections.Add(new Connection(Connection.Category.Prev, str));
-        public void setNextStatement(bool _, string[] str) => connections.Add(new Connection(Connection.Category.Next, str));
+        public void setOutput(bool _, string[] str) => connections.Add(new Connection(Connection.Category.Output, str, this));
+        public void setPreviousStatement(bool _, string[] str) => connections.Add(new Connection(Connection.Category.Prev, str, this));
+        public void setNextStatement(bool _, string[] str) => connections.Add(new Connection(Connection.Category.Next, str, this));
 
         public void setColour(float H) => color = Color.HSVToRGB(H / 360.0f, 1.0f, 1.0f, false);
         public void setColour(float H, float S, float V) => color = Color.HSVToRGB(H, S, V, false);
@@ -94,15 +97,17 @@ namespace Blockly
             return whereInline[index];
         }
 
-        public bool isDoubleStatementInput(int index)
+        public bool inputNeedsFloor(int index)
         {
-            return inputs[index].category == Input.Category.Statement 
-                && index + 1 < inputs.Count 
-                && inputs[index + 1].category == Input.Category.Statement;
+            return (inputs[index].category == Input.Category.Statement 
+                && index + 1 < inputs.Count
+                && inputs[index + 1].category == Input.Category.Statement)
+                || (index == inputs.Count - 1 && inputs[index].category == Input.Category.Statement);
         }
 
-
-
-
+        public object execute(object o)
+        {
+            return null;
+        }
     }
 }
