@@ -40,7 +40,7 @@ namespace Blockly
 
             //makeSpine();
 
-            //BlockObject blockObject = blockObj.AddComponent<BlockObject>();
+            BlockObject blockObject = blockObj.AddComponent<BlockObject>();
             // blockObject.addConnections(connectionDict);
 
             // Fields!!!!!!!!!!!!
@@ -55,7 +55,7 @@ namespace Blockly
                     addField(field); // call default adds getNextPosition(false)
 
                 if (block.isInline(i))
-                    addInlineConnection(input);  
+                    addInlineConnection(input);
                 else {
                     addExtender();
                     addExternalConnection(input);  //With Highlight, add in dict
@@ -116,7 +116,7 @@ namespace Blockly
                     RectTransform r = obj.GetComponent<RectTransform>();
                     total_width += (r == null) ? LAYER_WIDTH : r.rect.width;
                 }
-        
+
             return new Vector3(total_width, -total_height, 0);
         }
 
@@ -145,7 +145,7 @@ namespace Blockly
                 obj = makeUnitSquare(localPosition, "InlineConnection", "HorzFemale");
                 connectionDict.Add(input.connection, makeUnitSquare(localPosition, "Highlight", "VertHigh", true));
             } else
-                obj = makeUnitSquare(localPosition, "InlineConnection", "Square"); 
+                obj = makeUnitSquare(localPosition, "InlineConnection", "Square");
 
             rowLists[rowLists.Count - 1].Add(obj);
 
@@ -158,7 +158,7 @@ namespace Blockly
             GameObject obj;
             Vector3 localPosition = getNextPosition(false);
             if (input.category == Input.Category.Statement)
-                obj = makeUnitSquare(localPosition, "Connection", "VertMale"); 
+                obj = makeUnitSquare(localPosition, "Connection", "VertMale");
             else if (input.category == Input.Category.Value)
                 obj = makeUnitSquare(localPosition, "Connection", "HorzFemale");
             else
@@ -331,7 +331,7 @@ namespace Blockly
             rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, (float) width / 2);
             rect.localScale = new Vector3(.5f, .5f, 0f);
 
-            
+
             Image image = fieldSquare.AddComponent<Image>();
             RectTransform rect1 = image.gameObject.GetComponent<RectTransform>();
             rect1.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);

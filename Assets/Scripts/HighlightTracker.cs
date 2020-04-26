@@ -11,8 +11,8 @@ public class HighlightTracker : MonoBehaviour
     {
         GameObject highlight = GameObject.Find("Button").transform.GetChild(0).gameObject;
         Image im = highlight.GetComponent<Image>();
-        im.enabled = true;
-        lastHighlight = im;
+        im.enabled = false;
+        lastHighlight = null;
     }
 
     // Update is called once per frame

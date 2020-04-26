@@ -24,7 +24,14 @@ public class ButtonScript : MonoBehaviour
       Image lastImg = HighlightTracker.lastHighlight;
       if (thisImage != lastImg) {
         thisImage.enabled = true;
-        lastImg.enabled = false;
+        if (lastImg != null)
+          lastImg.enabled = false;
+      }
+      else {
+        if (count % 2 == 0)
+          thisImage.enabled = false;
+        else
+          thisImage.enabled = true;
       }
       HighlightTracker.lastHighlight = thisImage;
       if (categoryScroll == null) {
