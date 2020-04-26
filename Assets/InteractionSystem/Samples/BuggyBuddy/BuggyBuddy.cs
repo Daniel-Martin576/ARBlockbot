@@ -147,9 +147,9 @@ namespace Valve.VR.InteractionSystem.Sample
                 throttle = 0.1f;
                
             }
-            else
+            //rotateL is the stop button, rename to stop if this is kept
+            else if (rotateL == true)
             {
-          
                 throttle = 0f;
             }
 

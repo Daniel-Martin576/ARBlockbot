@@ -7,6 +7,9 @@ TagManager:
   - Block
   - Trash
   - Extend
+  - projectile
+  - FxTemporaire
+  - Robot
   layers:
   - Default
   - TransparentFX
