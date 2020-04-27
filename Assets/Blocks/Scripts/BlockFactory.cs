@@ -34,7 +34,7 @@ namespace Blockly
 
         public GameObject build()
         {
-            blockObj = makeObject(block.name, transform);
+            blockObj = makeObject("Holder", transform);
             blockObj.AddComponent<GraphicRaycaster>();
             //blockObj.tag = "Block";
             //BlockObject blockObject = blockObj.AddComponent<BlockObject>();
@@ -73,9 +73,7 @@ namespace Blockly
             }
 
             adjustSize();
-
             addMainConnections();
-
 
             GameObject dummyBlockObj = makeObject(block.name, rowLists[0][0].transform);
             dummyBlockObj.AddComponent<GraphicRaycaster>();
@@ -85,8 +83,10 @@ namespace Blockly
             RectTransform rect = dummyBlockObj.GetComponent<RectTransform>();
             rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, total_width);
             rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, total_height);
-            dummyBlockObj.transform.SetParent(blockObj.transform);
+            dummyBlockObj.transform.SetParent(transform);
+            blockObj.transform.SetParent(dummyBlockObj.transform);
 
+            /*
             foreach (List<GameObject> r in rowLists)
                 foreach (GameObject childObj in r)
                     if (childObj != dummyBlockObj)
@@ -98,18 +98,16 @@ namespace Blockly
             foreach (GameObject obj in extraConnections)
                 obj.transform.SetParent(dummyBlockObj.transform);
 
-            dummyBlockObj.transform.SetParent(transform);
-            blockObj.transform.SetParent(dummyBlockObj.transform);
-            blockObj.name = "Info";
+            blockObj = dummyBlockObj;
+            */
             if (block.start)
                 blockObj.tag = "Start";
-
-            blockObj = dummyBlockObj;
 
             blockObject.addConnections(connectionDict);
             blockObject.addParentBlock(block);
 
-            return blockObj;
+
+            return dummyBlockObj;
 
         }
 
