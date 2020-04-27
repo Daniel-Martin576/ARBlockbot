@@ -12,7 +12,7 @@ namespace Blockly
 
         public void Start() {
           touchTransform = transform;
-          createStartBlock();
+          // createStartBlock();
         }
 
 
