@@ -13,6 +13,7 @@ namespace Blockly
         public Color color;
         public bool inline;
         public Func<object, object> function;
+        public bool start;
 
         private bool[] whereInline;
 
@@ -23,6 +24,7 @@ namespace Blockly
             connections = new List<Connection>();
             inline = true;
             function = delegate (object o) { return null; };
+            start = false;
         }
 
         public Input appendValueInput(string name)
@@ -50,7 +52,7 @@ namespace Blockly
         public void setPreviousStatement(bool _, string[] str) => connections.Add(new Connection(Connection.Category.Prev, str, this));
         public void setNextStatement(bool _, string[] str) => connections.Add(new Connection(Connection.Category.Next, str, this));
 
-        public void setColour(float H) => color = Color.HSVToRGB(H / 360.0f, 1.0f, 1.0f, false);
+        public void setColour(float H) => color = Color.HSVToRGB(H / 360.0f, 0.5f, 1.0f, false);
         public void setColour(float H, float S, float V) => color = Color.HSVToRGB(H, S, V, false);
 
         public void setInputsInline(bool inline) => this.inline = inline;
@@ -58,7 +60,26 @@ namespace Blockly
         public void setTooltip(string str) { }
         public void setHelpUrl(string str) { }
 
-        public void build(Transform transform) => new BlockFactory(this, transform);
+        public void setStart(bool start) => this.start = start;
+
+        public object callNext() {
+            Block othBlock = null;
+            foreach (Connection connection in connections)
+                if (connection.category == Connection.Category.Next)
+                    othBlock = connection.connectedBlock();
+            return (othBlock != null) ? othBlock.function(null) : null;
+        }
+
+        public object callInput(string name)
+        {
+            Block othBlock = null;
+            foreach (Input input in inputs)
+                if (input.name == name && input.connection != null)
+                    othBlock = input.connection.connectedBlock();
+            return (othBlock != null) ? othBlock.function(null) : null;
+        }
+
+        public GameObject build(Transform transform) => (new BlockFactory(this, transform)).build();
 
 
 

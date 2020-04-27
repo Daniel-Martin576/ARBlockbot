@@ -9,6 +9,9 @@ TagManager:
   - Extend
   - drawGroup
   - highlight
+  - Content
+  - Canvas
+  - Start
   layers:
   - Default
   - TransparentFX

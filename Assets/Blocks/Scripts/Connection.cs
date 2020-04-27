@@ -78,6 +78,6 @@ namespace Blockly
         public void join(Connection con) => pair = con;
         public void unjoin() => pair = null;
         public bool linked() => pair != null;
-        public Block connectedBlock() => pair.parentBlock;
+        public Block connectedBlock() => pair != null ? pair.parentBlock : null;
     }
 }

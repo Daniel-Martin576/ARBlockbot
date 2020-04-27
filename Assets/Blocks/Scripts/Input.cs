@@ -22,7 +22,6 @@ namespace Blockly
             this.parentBlock = parentBlock;
             fields = new List<Field>();
         }
-
         public Input setCheck(string[] str)
         {
             if (category == Category.Value)

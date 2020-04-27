@@ -7,13 +7,13 @@ using UnityEngine.UI;
 using Blockly;
 
 // Trash, re work
-public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerClickHandler
+public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     private GameObject trash;
-    private const float maxTrashDist = 1000f;
+    private const float maxTrashDist = 3000f;
 
     protected Connection[] myConnections;
-    private const float maxConnectionDist = 300.0f;
+    private const float maxConnectionDist =1500.0f;
     private Tuple<Connection, Connection, BlockObject> lastPotConnection;
     private Transform OrigParent;
     private Block parentBlock;
@@ -27,7 +27,6 @@ public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     {
         trash = GameObject.FindGameObjectWithTag("Trash");
         OrigParent = transform.parent;
-
     }
 
     public void addConnections(Dictionary<Connection, GameObject> connectionDict)
@@ -36,10 +35,9 @@ public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         myConnections = new List<Connection>(connectionDict.Keys).ToArray();
     }
 
-    public void addParentBlock(Block parentBlock)
-    {
-        this.parentBlock = parentBlock; 
-    }
+    public void addParentBlock(Block parentBlock) => this.parentBlock = parentBlock; 
+    
+    public Block getParentBlock() => parentBlock; 
 
     public Connection[] getConnections()
     {
@@ -61,10 +59,8 @@ public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
             if (blocksObject != this.gameObject)
             {
                 Connection[] othConnections = blocksObject.GetComponent<BlockObject>().getConnections();
-                
                 foreach (Connection othConnection in othConnections)
                 {
-                    print(othConnection);
                     foreach (Connection myConnection in myConnections)
                     {
                         if (Connection.canConnect(myConnection, othConnection))
@@ -176,6 +172,7 @@ public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     public bool checkIfOnTrash()
     {
+        if (trash == null) return false;
         bool closeEnough = (trash.transform.position - transform.position).sqrMagnitude < maxTrashDist;
         // Kinda hacky; disabledSprite = Open Trash Sprite, selectedSprite = Close Trash Sprite
         if (closeEnough)
@@ -190,9 +187,4 @@ public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     public virtual void execute() { }
     public virtual object getReturn() => null;
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        
-    }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Blockly
@@ -14,8 +15,12 @@ namespace Blockly
         private Transform transform;
         private GameObject blockObj;
 
+        private float total_width = 0;
+        private float total_height = 0;
+
         private Dictionary<Connection, GameObject> connectionDict;
         private List<List<GameObject>> rowLists;
+        private List<GameObject> extraConnections;
 
 
         public BlockFactory(Block block, Transform transform)
@@ -24,56 +29,95 @@ namespace Blockly
             this.transform = transform;
             rowLists = new List<List<GameObject>>();
             connectionDict = new Dictionary<Connection, GameObject>();
-            build();
+            extraConnections = new List<GameObject>();
         }
 
-        public void build()
+        public GameObject build()
         {
             blockObj = makeObject(block.name, transform);
             blockObj.AddComponent<GraphicRaycaster>();
-            blockObj.tag = "Block";
-            BlockObject blockObject = blockObj.AddComponent<BlockObject>();
+            //blockObj.tag = "Block";
+            //BlockObject blockObject = blockObj.AddComponent<BlockObject>();
 
             int row = 0;
             int i = 0;
             foreach (Input input in block.inputs)
             {
-                if (row == rowLists.Count) rowLists.Add(new List<GameObject>{ makeParentedBox(getNextPosition(true), "Extender")});
-                
+                if (row == rowLists.Count) rowLists.Add(new List<GameObject> { makeParentedBox(getNextPosition(true), "Extender") });
+
                 foreach (Field field in input.fields)
                     addField(field); // call default adds getNextPosition(false)
 
-                if (block.isInline(i)) {
+                if (block.isInline(i))
+                {
                     addInlineConnection(input);
-                    if (i + 1 < block.inputs.Count && !block.isInline(i + 1)) {
-                        addExtender();
+                    if ((i + 1 < block.inputs.Count && !block.isInline(i + 1)) || i + 1 == block.inputs.Count)
+                    {
+                        changeExtenderWidth(addExtender(), LAYER_WIDTH / 2.0f);
                         row++;
                     }
                 }
-                else {
+                else
+                {
                     addExternalConnection(input);  //With Highlight, add in dict
                     row++;
                 }
-                
-                if (block.inputNeedsFloor(i)) {
+
+                if (block.inputNeedsFloor(i))
+                {
                     addDummyRow();
                     row++;
                 }
 
                 i++;
             }
-            addMainConnections();
 
             adjustSize();
 
-            blockObject.addConnections(connectionDict);
+            addMainConnections();
 
-            // Excute!!!!!!!!!!!!
+
+            GameObject dummyBlockObj = makeObject(block.name, rowLists[0][0].transform);
+            dummyBlockObj.AddComponent<GraphicRaycaster>();
+            dummyBlockObj.tag = "Block";
+            BlockObject blockObject = dummyBlockObj.AddComponent<BlockObject>();
+
+            RectTransform rect = dummyBlockObj.GetComponent<RectTransform>();
+            rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, total_width);
+            rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, total_height);
+            dummyBlockObj.transform.SetParent(blockObj.transform);
+
+            foreach (List<GameObject> r in rowLists)
+                foreach (GameObject childObj in r)
+                    if (childObj != dummyBlockObj)
+                        childObj.transform.SetParent(dummyBlockObj.transform);
+
+            foreach (GameObject obj in connectionDict.Values)
+                obj.transform.SetParent(dummyBlockObj.transform);
+
+            foreach (GameObject obj in extraConnections)
+                obj.transform.SetParent(dummyBlockObj.transform);
+
+            dummyBlockObj.transform.SetParent(transform);
+            blockObj.transform.SetParent(dummyBlockObj.transform);
+            blockObj.name = "Info";
+            if (block.start)
+                blockObj.tag = "Start";
+
+            blockObj = dummyBlockObj;
+
+            blockObject.addConnections(connectionDict);
+            blockObject.addParentBlock(block);
+
+            return blockObj;
+
         }
 
         public void Update()
         {
             // Extenders
+            adjustSize();
+
         }
 
         private GameObject makeObject(string name, Transform parentTransfrom) => makeObject(name, parentTransfrom, new Vector3(0, 0, 0));
@@ -115,7 +159,7 @@ namespace Blockly
                     RectTransform r = obj.GetComponent<RectTransform>();
                     total_width += (r == null) ? LAYER_WIDTH : r.rect.width;
                 }
-        
+
             return new Vector3(total_width, -total_height, 0);
         }
 
@@ -149,27 +193,44 @@ namespace Blockly
         }
 
         private void addExternalConnection(Input input)
-        {   
+        {
             GameObject obj;
 
-            if (input.category == Input.Category.Statement) {
+            if (input.category == Input.Category.Statement)
+            {
                 Vector3 localPosition = getNextPosition(false);
                 obj = makeUnitSquare(localPosition, "StatementEndConnection", "VertMale");
                 connectionDict.Add(input.connection, makeUnitSquare(localPosition, "Highlight", "VertHigh", true));
                 rowLists[rowLists.Count - 1].Add(obj);
-            } else if (input.category == Input.Category.Value) {
-                addExtender();
+            }
+            else if (input.category == Input.Category.Value)
+            {
+                changeExtenderWidth(addExtender(), 0f);
                 Vector3 localPosition = getNextPosition(false);
                 obj = makeUnitSquare(localPosition, "ValueEndConnection", "HorzFemale");
                 connectionDict.Add(input.connection, makeUnitSquare(localPosition, "Highlight", "HorzHigh", true));
                 rowLists[rowLists.Count - 1].Add(obj);
-            } else
+            }
+            else
                 addExtender();
         }
 
-        private void addExtender()
+        private GameObject addExtender()
         {
-            rowLists[rowLists.Count - 1].Add(makeParentedBox(getNextPosition(false), "Extender"));
+            GameObject obj = makeParentedBox(getNextPosition(false), "Extender");
+            rowLists[rowLists.Count - 1].Add(obj);
+            return obj;
+        }
+
+        private void changeExtenderWidth(GameObject obj, float width)
+        {
+            RectTransform childRect = obj.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
+            childRect.sizeDelta = new Vector2(width, childRect.sizeDelta.y);
+            RectTransform rect = obj.GetComponent<RectTransform>();
+            float prev_width = rect.rect.width;
+            rect.sizeDelta = new Vector2(width, rect.sizeDelta.y);
+            obj.transform.position += new Vector3((width - prev_width) / 2.0f, 0, 0);
+
         }
 
         private GameObject makeParentedBox(Vector3 localPosition, string name = "UnitBlock")
@@ -186,10 +247,80 @@ namespace Blockly
         {
             GameObject obj;
             if (field is FieldLabelSerializable)
-                obj = makeTextBlock(((FieldLabelSerializable) field).text);
+                obj = makeTextBlock(((FieldLabelSerializable)field).text);
+            else if (field is FieldNumber)
+                obj = makeTextBlock(((FieldNumber)field).number.ToString());
+            else if (field is FieldAngle)
+                obj = makeTextBlock(((FieldAngle)field).angle.ToString());
+            else if (field is FieldTextInput)
+                obj = makeTextInput(((FieldTextInput)field).text.ToString(), (FieldTextInput)field);
             else
                 obj = makeTextBlock(field.name);
             rowLists[rowLists.Count - 1].Add(obj);
+        }
+
+        private GameObject makeTextInput(string str, FieldTextInput field)
+        {
+            GameObject parentObj = makeObject("TextInputBlock", blockObj.transform, getNextPosition(false));
+
+
+            GameObject fieldSquare = makeUnitSquare(new Vector3(0, 0, 0), parentObj.transform);
+            fieldSquare.transform.SetParent(parentObj.transform);
+
+            GameObject inputObj = makeObject("InputField", parentObj.transform, new Vector3(0, 0, 0));
+            InputField inputField = inputObj.AddComponent<InputField>();
+
+            Image image = inputObj.AddComponent<Image>();
+            image.sprite = Resources.Load<Sprite>("background");
+            image.color = new Color(222f, 222f, 222f, .6f);
+            inputField.targetGraphic = image;
+
+
+            GameObject textObj = makeObject("Text", inputObj.transform, new Vector3(0, 0, 0));
+            Text text = textObj.AddComponent<Text>();
+            text.font = Resources.Load<Font>("Anonymous_Pro");
+            text.fontSize = 20;
+            text.horizontalOverflow = HorizontalWrapMode.Overflow;
+            text.verticalOverflow = VerticalWrapMode.Overflow;
+            text.alignment = TextAnchor.MiddleCenter;
+            inputField.text = str;
+            text.color = new Color(0, 0, 0);
+            text.supportRichText = false;
+            inputField.textComponent = text;
+            float magic_size = 11.8f;
+
+            RectTransform parentRect = parentObj.AddComponent<RectTransform>();
+            parentRect.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
+            RectTransform textRect = text.gameObject.GetComponent<RectTransform>();
+            textRect.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
+            RectTransform squareRect = fieldSquare.GetComponent<RectTransform>();
+            squareRect.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
+            RectTransform inputRect = inputObj.GetComponent<RectTransform>();
+            inputRect.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
+            int i = rowLists.Count - 1;
+            bool pass = false;
+
+            void reshape(string word)
+            {
+                field.text = word;
+                float width = Mathf.Max(word.Length * magic_size, 30);
+                textRect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, width);
+                squareRect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, width);
+                inputRect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, width);
+
+                parentRect.transform.position += new Vector3((textRect.sizeDelta.x - parentRect.sizeDelta.x) / 2, 0, 0);
+                parentRect.sizeDelta = textRect.sizeDelta;
+                if (pass)
+                    adjustSize();
+            }
+
+
+            reshape(str);
+            UnityAction<string> action = reshape;
+            inputField.onValueChanged.AddListener(action);
+            pass = true;
+
+            return parentObj;
         }
 
         private GameObject makeTextBlock(string str)
@@ -206,7 +337,7 @@ namespace Blockly
 
             Text text = fieldObj.AddComponent<Text>();
             text.font = Resources.Load<Font>("Anonymous_Pro");
-            text.fontSize = 50;
+            text.fontSize = 20;
             text.horizontalOverflow = HorizontalWrapMode.Overflow;
             text.verticalOverflow = VerticalWrapMode.Overflow;
             text.alignment = TextAnchor.MiddleCenter;
@@ -215,14 +346,14 @@ namespace Blockly
             text.supportRichText = false;
 
             float shrink = .3f;
-            float magic_size = 8.2f;
+            float magic_size = 11.8f;
             float width = str.Length * magic_size;
 
-           
+
             RectTransform rect = text.gameObject.GetComponent<RectTransform>();
             rect.sizeDelta = new Vector2(LAYER_WIDTH, LAYER_HEIGHT);
             rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, width);
-            rect.localScale = new Vector3(shrink, shrink, 0f);
+            // rect.localScale = new Vector3(shrink, shrink, 0f);
 
             float afterFieldGap = 5;
             RectTransform rect1 = fieldSquare.GetComponent<RectTransform>();
@@ -242,17 +373,18 @@ namespace Blockly
                 if (connection.category == Connection.Category.Prev)
                 {
                     rowLists[0][0].GetComponentInChildren<Image>().sprite = Resources.Load<Sprite>("VertFemale");
-                    connectionDict.Add(connection, makeUnitSquare(new Vector3(0,0,0), "Highlight", "VertHigh", true));
+                    connectionDict.Add(connection, makeUnitSquare(new Vector3(0, 0, 0), "Highlight", "VertHigh", true));
                 }
                 else if (connection.category == Connection.Category.Next)
                 {
                     Vector3 localPostion = getNextPosition(true);
-                    makeUnitSquare(localPostion, "Next", "VertMale");
+                    extraConnections.Add(makeUnitSquare(localPostion, "Next", "VertMale"));
                     connectionDict.Add(connection, makeUnitSquare(localPostion, "Highlight", "VertHigh", true));
-                } else if (connection.category == Connection.Category.Output)
+                }
+                else if (connection.category == Connection.Category.Output)
                 {
-                    makeUnitSquare(new Vector3(-LAYER_WIDTH, 0, 0), "Next", "HorzMale");
-                    connectionDict.Add(connection, makeUnitSquare(new Vector3(-LAYER_WIDTH,0,0), "Highlight", "HorzHigh", true));
+                    extraConnections.Add(makeUnitSquare(new Vector3(-LAYER_WIDTH, 0, 0), "Next", "HorzMale"));
+                    connectionDict.Add(connection, makeUnitSquare(new Vector3(-LAYER_WIDTH, 0, 0), "Highlight", "HorzHigh", true));
                 }
             }
         }
@@ -263,42 +395,51 @@ namespace Blockly
             float max_width2 = 0f;
             // total_height = 0;
 
-
             bool[] rowShort = new bool[rowLists.Count];
             float[] rowWidth = new float[rowLists.Count];
             int i = 0;
             // Calculate
             foreach (List<GameObject> row in rowLists)
             {
-                float width = 0;
+                float width_sum = 0;
                 foreach (GameObject obj in row)
                 {
+                    if (obj.name == "Extender")
+                        changeExtenderWidth(obj, width_sum > 0 ? 0 : LAYER_WIDTH);
                     RectTransform r = obj.GetComponent<RectTransform>();
-                    width += (r == null) ? LAYER_WIDTH : r.rect.width;
+                    float width = (r == null) ? LAYER_WIDTH : r.rect.width;
+
+                    obj.transform.localPosition = new Vector3(width_sum - row[0].GetComponent<RectTransform>().rect.width / 2.0f + width / 2.0f,
+                        obj.transform.localPosition.y, obj.transform.localPosition.z);
+                    width_sum += width;
                 }
 
                 if (rowShort[i] = (row[row.Count - 1].name == "StatementEndConnection"))
-                    if (width > max_width1)
-                        max_width1 = width;
-                if (width > max_width2)
-                    max_width2 = width;
+                    if (width_sum > max_width1)
+                        max_width1 = width_sum;
+                if (width_sum > max_width2)
+                    max_width2 = width_sum;
 
-                rowWidth[i] = width;
+                rowWidth[i] = width_sum;
                 i++;
             }
+            total_width = max_width2;
+            total_height = LAYER_HEIGHT * rowLists.Count;
+
+
 
             i = 0;
             foreach (List<GameObject> row in rowLists)
             {
-                Debug.Log(rowShort[i]);
+                // Debug.Log(rowShort[i]);
                 if (rowShort[i] && row[0].name == "Extender")
                 {
-                    RectTransform rect = row[0].transform.GetChild(0).gameObject.GetComponent<RectTransform>();
-                    rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, LAYER_WIDTH + (max_width1 - rowWidth[i]));
+                    RectTransform rect = row[0].GetComponent<RectTransform>();
+                    changeExtenderWidth(row[0], max_width1 - rowWidth[i] + +rect.rect.width);
                     int j = 0;
-                    foreach (GameObject obj in row) 
+                    foreach (GameObject obj in row)
                         if (j++ != 0)
-                            obj.transform.position = obj.transform.position + new Vector3((max_width1 - rowWidth[i]), 0, 0);  
+                            obj.transform.position = obj.transform.position + new Vector3((max_width1 - rowWidth[i]) / 2.0f, 0, 0);
                 }
                 else
                 {
@@ -308,20 +449,15 @@ namespace Blockly
                     else if (row.Count - 2 >= 0 && row[row.Count - 2].name == "Extender")
                     {
                         obj = row[row.Count - 2];
-                        row[row.Count - 1].transform.position = row[row.Count - 1].transform.position + new Vector3((max_width2 - rowWidth[i]), 0, 0);
+                        row[row.Count - 1].transform.position += new Vector3((max_width2 - rowWidth[i]), 0, 0);
                     }
-                    
 
                     if (obj != null)
-                    {
-                        RectTransform rect = obj.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
-                        rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, LAYER_WIDTH + (max_width2 - rowWidth[i]));
-                    }
-                            
+                        changeExtenderWidth(obj, max_width2 - rowWidth[i] + obj.GetComponent<RectTransform>().rect.width);
                 }
                 i++;
             }
-            
+
         }
 
     }
