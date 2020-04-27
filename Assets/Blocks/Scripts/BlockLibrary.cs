@@ -2,15 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Blockly
 {
     public class BlockLibrary : MonoBehaviour
     {
+        private Transform touchTransform;
 
-      public void Start() {
-        createStartBlock();
-      }
+        public void Start() {
+          touchTransform = transform;
+          createStartBlock();
+        }
+
 
         public void createStartBlock()
         {
@@ -25,7 +29,7 @@ namespace Blockly
             //     return block.connections[0].parentBlock.function(null);
             // };
 
-            block.build(transform);
+            block.build(touchTransform);
 
         }
 
@@ -53,6 +57,11 @@ namespace Blockly
             block.setNextStatement(true, null);
             block.setInputsInline(false);
             block.setColour(230);
+        }
+
+        public void Update() {
+          Touch touch = Input.GetTouch(0);
+          touchTransform.position = touch.position;
         }
 
     }
