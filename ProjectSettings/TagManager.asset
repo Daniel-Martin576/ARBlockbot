@@ -12,6 +12,9 @@ TagManager:
   - Content
   - Canvas
   - Start
+  - projectile
+  - FxTemporaire
+  - Robot
   layers:
   - Default
   - TransparentFX

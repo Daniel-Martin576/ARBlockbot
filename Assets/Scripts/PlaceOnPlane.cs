@@ -68,13 +68,17 @@ public class PlaceOnPlane : MonoBehaviour
             // will be the closest hit.
             var hitPose = s_Hits[0].pose;
 
+
             if (spawnedObject == null)
             {
-                spawnedObject = Instantiate(m_PlacedPrefab, hitPose.position, hitPose.rotation);
+                spawnedObject = Instantiate(m_PlacedPrefab, hitPose.position + new Vector3(0, 0.5f, 0), new Quaternion(0, 1, 0, 0));
             }
             else
             {
-                spawnedObject.transform.position = hitPose.position;
+                spawnedObject.transform.position = hitPose.position + new Vector3(0, 0.5f, 0);
+                spawnedObject.transform.rotation = new Quaternion(0, 1, 0, 0);
+                spawnedObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                spawnedObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             }
         }
     }

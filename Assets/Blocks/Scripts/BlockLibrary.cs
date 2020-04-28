@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using Valve.VR.InteractionSystem.Sample;
 
-namespace Blockly 
+namespace Blockly
 {
-    public class BlockLibrary 
+    public class BlockLibrary
     {
         public Transform transform;
         public Block startBlock;
@@ -17,7 +18,7 @@ namespace Blockly
             GameObject robot = GameObject.FindGameObjectWithTag("Robot");
             if (robot != null)
                 buggyBuddy = robot.GetComponent<BuggyBuddy>();
-            
+
             if (startBlock != null)
                 startBlock.function(null);
         }
@@ -29,7 +30,7 @@ namespace Blockly
                 return robot.GetComponent<BuggyBuddy>();
             return null;
         }
-        
+
         public static GameObject createStartBlock(Transform transform) {
             Block block = new Block("StartBlock");
             block.appendDummyInput()
@@ -38,8 +39,8 @@ namespace Blockly
             block.setColour(165);
             block.function = delegate (object o) { return block.callNext(); };
             block.setStart(true);
-           
-            // GameObject obj = 
+
+            // GameObject obj =
             return block.build(transform);
             // startBlock = block;
         }
@@ -102,7 +103,7 @@ namespace Blockly
                 {
                     Debug.Log("Setting Steering to " + steeringValue.ToString());
                     steeringValue = Mathf.Clamp(steeringValue / 100.0f, -1f, 1f);
-                    buggyBuddy.steer = new Vector2(steeringValue / 100.0f, 0);
+                    buggyBuddy.steer = new Vector2(steeringValue, 1f);
                 }
                 return block.callNext();
             };
@@ -170,12 +171,12 @@ namespace Blockly
         {
             Block block = new Block("InputBlock");
             block.appendDummyInput()
-                 .appendField(new Blockly.FieldTextInput("Hello"), "name");
+                 .appendField(new Blockly.FieldTextInput("Input"), "name");
             block.setOutput(true, null);
             block.setInputsInline(false);
             block.setColour(130);
             block.function = delegate (object o) {
-                return ((FieldTextInput)block.inputs[0].fields[0]).text; 
+                return ((FieldTextInput)block.inputs[0].fields[0]).text;
             };
             return block.build(transform);
         }
