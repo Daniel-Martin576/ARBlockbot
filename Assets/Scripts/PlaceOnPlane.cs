@@ -59,11 +59,13 @@ public class PlaceOnPlane : MonoBehaviour
 
     void Update()
     {
+
         if (!TryGetTouchPosition(out Vector2 touchPosition))
             return;
 
-        if (m_RaycastManager.Raycast(touchPosition, s_Hits, TrackableType.PlaneWithinPolygon))
+        if (m_RaycastManager.Raycast(touchPosition, s_Hits, TrackableType.PlaneWithinPolygon) && !DrawerInteractions.drawerIsUp && touchPosition.y > (210))
         {
+           Debug.Log(touchPosition.y);
             // Raycast hits are sorted by distance, so the first one
             // will be the closest hit.
             var hitPose = s_Hits[0].pose;

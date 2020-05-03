@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class DrawerInteractions : MonoBehaviour
 {
-  private GameObject[] drawerElements;
+  public static bool drawerIsUp;
+  // private GameObject[] drawerElements;
 
   private float cHeight;
   private float buttonHeight;
@@ -35,6 +36,7 @@ public class DrawerInteractions : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+      drawerIsUp = false;
       upArrow = dButton.transform.Find("up-arrow").gameObject;
       upArrow.GetComponent<Text>().text = "^";
 
@@ -77,24 +79,24 @@ public class DrawerInteractions : MonoBehaviour
     }
 
     // moving the drawer up + switching the arrows
-    public void DrawerUp() {
-      foreach (GameObject go in drawerElements) {
-        RectTransform rtf = go.GetComponent<RectTransform>();
-        rtf.position = new Vector3(rtf.position.x, rtf.position.y + distanceToTop, rtf.position.z);
-      }
-      upArrow.GetComponent<Text>().text = "";
-      downArrow.GetComponent<Text>().text = "^";
-    }
-
-    // moving the drawer down + switching the arrows
-    public void DrawerDown() {
-      foreach (GameObject go in drawerElements) {
-        RectTransform rtf = go.GetComponent<RectTransform>();
-        rtf.position = new Vector3(rtf.position.x, rtf.position.y - distanceToTop, rtf.position.z);
-      }
-      upArrow.GetComponent<Text>().text = "^";
-      downArrow.GetComponent<Text>().text = "";
-    }
+    // public void DrawerUp() {
+    //   foreach (GameObject go in drawerElements) {
+    //     RectTransform rtf = go.GetComponent<RectTransform>();
+    //     rtf.position = new Vector3(rtf.position.x, rtf.position.y + distanceToTop, rtf.position.z);
+    //   }
+    //   upArrow.GetComponent<Text>().text = "";
+    //   downArrow.GetComponent<Text>().text = "^";
+    // }
+    //
+    // // moving the drawer down + switching the arrows
+    // public void DrawerDown() {
+    //   foreach (GameObject go in drawerElements) {
+    //     RectTransform rtf = go.GetComponent<RectTransform>();
+    //     rtf.position = new Vector3(rtf.position.x, rtf.position.y - distanceToTop, rtf.position.z);
+    //   }
+    //   upArrow.GetComponent<Text>().text = "^";
+    //   downArrow.GetComponent<Text>().text = "";
+    // }
 
 
     // Update is called once per frame
@@ -107,6 +109,7 @@ public class DrawerInteractions : MonoBehaviour
 
         upArrow.GetComponent<Text>().text = "";
         downArrow.GetComponent<Text>().text = "^";
+        drawerIsUp = true;
 
         // buttonImg.color = Color.Lerp(opaqueHandle, translucentHandle, Time.deltaTime * speed);
       }
@@ -117,57 +120,10 @@ public class DrawerInteractions : MonoBehaviour
 
         upArrow.GetComponent<Text>().text = "^";
         downArrow.GetComponent<Text>().text = "";
+        drawerIsUp = false;
 
           // buttonImg.color = Color.Lerp(translucentHandle, opaqueHandle, Time.deltaTime * speed);
       }
 
-      // move = 0;
-
-      if (Input.touchCount > 0  && Input.GetTouch(0).phase == TouchPhase.Moved) {
-
-        // Get movement of the finger since last frame
-        Vector2 touchDeltaPosition = Input.GetTouch(0).deltaPosition;
-
-        // // for detecting whether or not touch was on tab
-        // Vector3 touchPosWorld = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-        // Vector2 touchPosWorld2D = new Vector2(touchPosWorld.x, touchPosWorld.y);
-        //
-        // RaycastHit2D hitInformation = Physics2D.Raycast(touchPosWorld2D, Camera.main.transform.forward);
-        //
-        // if (hitInformation.collider != null) {
-        //    //We should have hit something with a 2D Physics collider!
-        //    GameObject touchedObject = hitInformation.transform.gameObject;
-        //    //touchedObject should be the object someone touched.
-        //    Debug.Log("Touched " + touchedObject.transform.name);
-        // }
-
-        // if (hitInformation.collider == null) {
-        //   Debug.Log("hitInformation collided with null");
-        // }
-
-        Ray raycast = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-        RaycastHit raycastHit;
-        if (Physics.Raycast(raycast, out raycastHit))
-        {
-            Debug.Log("Something Hit");
-            if (raycastHit.collider.name == "dButton")
-            {
-                Debug.Log("dButton clicked");
-            }
-
-        }
-
-
-
-        // get info about vertical direction of swipe
-        if (touchDeltaPosition.y > 60) {
-          Debug.Log("++++++++++++++++++++++++");
-        }
-
-        if (touchDeltaPosition.y < -60) {
-          Debug.Log("-------------------------");
-        }
-
-      }
     }
 }
