@@ -100,58 +100,36 @@ public class ScrollPopulate : MonoBehaviour
         scrollBlockDict = new Dictionary<string, List<Func<Transform, GameObject>>>();
         scrollBlockDict.Add("logic-scroll", new List<Func<Transform, GameObject>> {
                     Blockly.BlockLibrary.createStartBlock,
-                    Blockly.BlockLibrary.createPrintBlock,
-                    Blockly.BlockLibrary.createSetThrottleBlock,
-                    Blockly.BlockLibrary.createSetSteeringBlock,
-                    Blockly.BlockLibrary.createSleepBlock,
-                    Blockly.BlockLibrary.createLoopBlock,
-                    Blockly.BlockLibrary.createInputBlock
+                    Blockly.BlockLibrary.createIfDoBlock,
+                    Blockly.BlockLibrary.createNotBlock,
+                    Blockly.BlockLibrary.createTestTFBlock,
+                    Blockly.BlockLibrary.createCompareBlock,
 
         });
         scrollBlockDict.Add("loops-scroll", new List<Func<Transform, GameObject>> {
-                    Blockly.BlockLibrary.createStartBlock,
-                    Blockly.BlockLibrary.createPrintBlock,
-                    Blockly.BlockLibrary.createSetThrottleBlock,
-                    Blockly.BlockLibrary.createSetSteeringBlock,
-                    Blockly.BlockLibrary.createSleepBlock,
                     Blockly.BlockLibrary.createLoopBlock,
-                    Blockly.BlockLibrary.createInputBlock
+                    Blockly.BlockLibrary.createRepeatXBlock,
+                    Blockly.BlockLibrary.createRepeatWhileBlock,
+                    Blockly.BlockLibrary.createIteratorBlock,
         });
         scrollBlockDict.Add("math-scroll", new List<Func<Transform, GameObject>> {
-                    Blockly.BlockLibrary.createStartBlock,
-                    Blockly.BlockLibrary.createPrintBlock,
-                    Blockly.BlockLibrary.createSetThrottleBlock,
-                    Blockly.BlockLibrary.createSetSteeringBlock,
-                    Blockly.BlockLibrary.createSleepBlock,
-                    Blockly.BlockLibrary.createLoopBlock,
-                    Blockly.BlockLibrary.createInputBlock
+                    Blockly.BlockLibrary.createNumberBlock,
+                    Blockly.BlockLibrary.createPiBlock,
+                    Blockly.BlockLibrary.createAddBlock,
+                    Blockly.BlockLibrary.createMinusBlock,
+                    Blockly.BlockLibrary.createTimesBlock,
+                    Blockly.BlockLibrary.createDivideBlock,
         });
         scrollBlockDict.Add("movement-scroll", new List<Func<Transform, GameObject>> {
-                    Blockly.BlockLibrary.createStartBlock,
-                    Blockly.BlockLibrary.createPrintBlock,
                     Blockly.BlockLibrary.createSetThrottleBlock,
                     Blockly.BlockLibrary.createSetSteeringBlock,
-                    Blockly.BlockLibrary.createSleepBlock,
-                    Blockly.BlockLibrary.createLoopBlock,
-                    Blockly.BlockLibrary.createInputBlock
         });
         scrollBlockDict.Add("variables-scroll", new List<Func<Transform, GameObject>> {
-                    Blockly.BlockLibrary.createStartBlock,
+                    Blockly.BlockLibrary.createInputBlock,
                     Blockly.BlockLibrary.createPrintBlock,
-                    Blockly.BlockLibrary.createSetThrottleBlock,
-                    Blockly.BlockLibrary.createSetSteeringBlock,
-                    Blockly.BlockLibrary.createSleepBlock,
-                    Blockly.BlockLibrary.createLoopBlock,
-                    Blockly.BlockLibrary.createInputBlock
         });
-        scrollBlockDict.Add("fucntions-scroll", new List<Func<Transform, GameObject>> {
-                    Blockly.BlockLibrary.createStartBlock,
-                    Blockly.BlockLibrary.createPrintBlock,
-                    Blockly.BlockLibrary.createSetThrottleBlock,
-                    Blockly.BlockLibrary.createSetSteeringBlock,
-                    Blockly.BlockLibrary.createSleepBlock,
-                    Blockly.BlockLibrary.createLoopBlock,
-                    Blockly.BlockLibrary.createInputBlock
+        scrollBlockDict.Add("functions-scroll", new List<Func<Transform, GameObject>> {
+                    Blockly.BlockLibrary.createFunctionBlock,
         });
     }
 }

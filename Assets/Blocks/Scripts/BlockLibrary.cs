@@ -31,6 +31,10 @@ namespace Blockly
             return null;
         }
 
+        // =========================
+        // LOGIC
+        // =========================
+
         public static GameObject createStartBlock(Transform transform) {
             Block block = new Block("StartBlock");
             block.appendDummyInput()
@@ -45,24 +49,215 @@ namespace Blockly
             // startBlock = block;
         }
 
-        public static GameObject createPrintBlock(Transform transform)
+        public static GameObject createIfDoBlock(Transform transform) {
+          Block block = new Block("IfDoBlock");
+          block.appendValueInput("NAME")
+              .setCheck(null)
+              .appendField("if ");
+          block.appendStatementInput("NAME")
+              .setCheck(null)
+              .appendField("do ");
+          block.setColour(210);
+          return block.build(transform);
+        }
+
+        public static GameObject createNotBlock(Transform transform) {
+          Block block = new Block("NotBlock");
+          block.appendValueInput("NAME")
+              .setCheck(null)
+              .appendField("not");
+          block.setOutput(true, null);
+          block.setColour(210);
+          return block.build(transform);
+        }
+
+        public static GameObject createTestTFBlock(Transform transform) {
+          Block block = new Block("TestTFBlock");
+          block.appendValueInput("NAME")
+              .setCheck(null)
+              .appendField("test ");
+          block.appendValueInput("NAME")
+              .setCheck(null)
+              .appendField("if true ");
+          block.appendValueInput("NAME")
+              .setCheck(null)
+              .appendField("if false ");
+          block.setOutput(true, null);
+          block.setColour(210);
+          return block.build(transform);
+        }
+
+        public static GameObject createCompareBlock(Transform transform) {
+          Block block = new Block("CompareBlock");
+          block.appendValueInput("NAME")
+              .setCheck(null);
+          block.appendDummyInput()
+              .appendField(" =");
+          block.appendValueInput("NAME")
+              .setCheck(null);
+          block.setOutput(true, null);
+          block.setColour(210);
+          return block.build(transform);
+        }
+
+        // =========================
+        // LOOPS
+        // =========================
+
+        public static GameObject createLoopBlock(Transform transform)
         {
-            Block block = new Block("PrintBlock");
+            Block block = new Block("LoopBlock");
             block.appendValueInput("INPUT")
                 .setCheck(null)
-                .appendField("print");
+                .appendField("Loop");
+            block.appendStatementInput("INPUT1")
+                 .setCheck(null);
             block.setPreviousStatement(true, null);
             block.setNextStatement(true, null);
-            block.setColour(180);
+            block.setColour(50);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
-                if (obj != null)
-                    Debug.Log("Printing " + obj.ToString());
+                if (obj != null && int.TryParse(obj.ToString(), out int loop))
+                {
+                    for (int i = 0; i < loop; i++)
+                        block.callInput("INPUT1");
+                }
                 return block.callNext();
             };
-
             return block.build(transform);
         }
+
+        public static GameObject createRepeatXBlock(Transform transform) {
+          Block block = new Block("RepeatXBlock");
+          block.appendValueInput("NAME")
+              .setCheck(null)
+              .appendField("repeat ")
+              .appendField(new Blockly.FieldNumber(0), "NAME")
+              .appendField(" times");
+          block.appendStatementInput("NAME")
+              .setCheck(null)
+              .appendField("do ");
+          block.setOutput(true, null);
+          block.setColour(135);
+          return block.build(transform);
+        }
+
+        public static GameObject createRepeatWhileBlock(Transform transform) {
+          Block block = new Block("RepeatWhileBlock");
+          block.appendValueInput("NAME")
+              .setCheck(null)
+              .appendField("repeat ")
+              .appendField(new Blockly.FieldTextInput("dropdown here"), "NAME");
+          block.appendStatementInput("NAME")
+              .setCheck(null)
+              .appendField("do ");
+          block.setOutput(true, null);
+          block.setColour(135);
+          return block.build(transform);
+        }
+
+        public static GameObject createIteratorBlock(Transform transform) {
+          Block block = new Block("IteratorBlock");
+          block.appendValueInput("NAME")
+              .setCheck(null)
+              .appendField("count ")
+              .appendField(" from")
+              .appendField(new Blockly.FieldNumber(0), "NAME")
+              .appendField(" to")
+              .appendField(new Blockly.FieldNumber(0), "NAME")
+              .appendField(" by")
+              .appendField(new Blockly.FieldNumber(0), "NAME");
+          block.appendStatementInput("NAME")
+              .setCheck(null)
+              .appendField("do ");
+          block.setOutput(true, null);
+          block.setColour(135);
+          return block.build(transform);
+        }
+
+        // =========================
+        // MATH
+        // =========================
+
+        public static GameObject createNumberBlock(Transform transform)
+        {
+            Block block = new Block("NumberBlock");
+            block.appendDummyInput()
+                .appendField(2.ToString());
+            block.setOutput(true, null);
+            block.setColour(0);
+            block.function = delegate (object o) {
+                return 2;
+            };
+            return block.build(transform);
+        }
+
+        public static GameObject createPiBlock(Transform transform) {
+          Block block = new Block("PiBlock");
+          block.appendValueInput("NAME")
+              .setCheck(null)
+              .appendField("π");
+          block.setOutput(true, null);
+          block.setColour(0);
+          return block.build(transform);
+        }
+
+        public static GameObject createAddBlock(Transform transform) {
+          Block block = new Block("AddBlock");
+          block.appendValueInput("NAME")
+              .setCheck(null);
+          block.appendDummyInput()
+              .appendField(" +");
+          block.appendValueInput("NAME")
+              .setCheck(null);
+          block.setOutput(true, null);
+          block.setColour(0);
+          return block.build(transform);
+        }
+
+        public static GameObject createMinusBlock(Transform transform) {
+          Block block = new Block("MinusBlock");
+          block.appendValueInput("NAME")
+              .setCheck(null);
+          block.appendDummyInput()
+              .appendField(" -");
+          block.appendValueInput("NAME")
+              .setCheck(null);
+          block.setOutput(true, null);
+          block.setColour(0);
+          return block.build(transform);
+        }
+
+        public static GameObject createTimesBlock(Transform transform) {
+          Block block = new Block("TimesBlock");
+          block.appendValueInput("NAME")
+              .setCheck(null);
+          block.appendDummyInput()
+              .appendField(" ×");
+          block.appendValueInput("NAME")
+              .setCheck(null);
+          block.setOutput(true, null);
+          block.setColour(0);
+          return block.build(transform);
+        }
+
+        public static GameObject createDivideBlock(Transform transform) {
+          Block block = new Block("DivideBlock");
+          block.appendValueInput("NAME")
+              .setCheck(null);
+          block.appendDummyInput()
+              .appendField(" /");
+          block.appendValueInput("NAME")
+              .setCheck(null);
+          block.setOutput(true, null);
+          block.setColour(0);
+          return block.build(transform);
+        }
+
+
+        // =========================
+        // MOVEMENT
+        // =========================
 
         public static GameObject createSetThrottleBlock(Transform transform)
         {
@@ -131,41 +326,29 @@ namespace Blockly
             return block.build(transform);
         }
 
-        public static GameObject createLoopBlock(Transform transform)
+        // =========================
+        // FUNCTIONS
+        // =========================
+
+        public static GameObject createFunctionBlock(Transform transform)
         {
-            Block block = new Block("LoopBlock");
-            block.appendValueInput("INPUT")
-                .setCheck(null)
-                .appendField("Loop");
-            block.appendStatementInput("INPUT1")
-                 .setCheck(null);
-            block.setPreviousStatement(true, null);
-            block.setNextStatement(true, null);
-            block.setColour(50);
-            block.function = delegate (object o) {
-                object obj = block.callInput("INPUT");
-                if (obj != null && int.TryParse(obj.ToString(), out int loop))
-                {
-                    for (int i = 0; i < loop; i++)
-                        block.callInput("INPUT1");
-                }
-                return block.callNext();
-            };
+            Block block = new Block("FunctionBlock");
+              block.appendValueInput("NAME")
+                  .setCheck(null)
+                  .appendField("if ");
+              block.appendDummyInput()
+                  .appendField(" return");
+              block.appendValueInput("NAME")
+                  .setCheck(null);
+              block.setOutput(true, null);
+              block.setColour(0);
             return block.build(transform);
         }
 
-        public static GameObject createNumberBlock(Transform transform)
-        {
-            Block block = new Block("NumberBlock");
-            block.appendDummyInput()
-                .appendField(2.ToString());
-            block.setOutput(true, null);
-            block.setColour(130);
-            block.function = delegate (object o) {
-                return 2;
-            };
-            return block.build(transform);
-        }
+
+        // =========================
+        // IN/OUT
+        // =========================
 
         public static GameObject createInputBlock(Transform transform)
         {
@@ -180,6 +363,29 @@ namespace Blockly
             };
             return block.build(transform);
         }
+
+
+        public static GameObject createPrintBlock(Transform transform)
+        {
+            Block block = new Block("PrintBlock");
+            block.appendValueInput("INPUT")
+                .setCheck(null)
+                .appendField("print");
+            block.setPreviousStatement(true, null);
+            block.setNextStatement(true, null);
+            block.setColour(180);
+            block.function = delegate (object o) {
+                object obj = block.callInput("INPUT");
+                if (obj != null)
+                    Debug.Log("Printing " + obj.ToString());
+                return block.callNext();
+            };
+
+            return block.build(transform);
+        }
+
+
+
 
 
         public void createRandomBlock()
