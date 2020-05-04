@@ -5,6 +5,6 @@ Link to repo: https://github.com/Daniel-Martin576/ARBlockbot
 Note that the default branch with the complete project is 'kevin', not 'master'.
 
 To run:
-  1) make sure you're on the default branch, and clone or download repo
-  2) open project in Unity
-  3) build and run on your Android device
+  1) Make sure you're on the default branch (kevin), and clone or download repo
+  2) Open project in Unity (make sure the platform in build settings is Android)
+  3) Build and run on your Android device
