@@ -103,7 +103,8 @@ public class ScrollPopulate : MonoBehaviour
                     Debug.Log("Updating...");
                     BuggyBuddy buggyBuddy = GetBuggy();
                     foreach (Blockly.Block block in blocks)
-                        block.buggyBuddy = buggyBuddy;
+                        if (block != null)
+                            block.buggyBuddy = buggyBuddy;
 
                     Debug.Log("Starting...");
                     void startFunction() => startBlock.function(null);
