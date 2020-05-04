@@ -33,7 +33,7 @@ namespace Blockly
             block.appendDummyInput()
                  .appendField("Start");
             block.setNextStatement(true, null);
-            block.setColour(165);
+            block.setColour(190);
             block.function = delegate (object o) { return block.callNext(); };
             block.setStart(true);
 
@@ -51,7 +51,7 @@ namespace Blockly
                 .appendField("do ");
             block.setPreviousStatement(true, null);
             block.setNextStatement(true, null);
-            block.setColour(210);
+            block.setColour(220);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 if (obj != null && bool.TryParse(obj.ToString(), out bool check))
@@ -70,7 +70,7 @@ namespace Blockly
                 .setCheck(null)
                 .appendField("not");
             block.setOutput(true, null);
-            block.setColour(210);
+            block.setColour(220);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 if (obj != null && bool.TryParse(obj.ToString(), out bool check))
@@ -93,7 +93,7 @@ namespace Blockly
                 .setCheck(null)
                 .appendField("if false ");
             block.setOutput(true, null);
-            block.setColour(210);
+            block.setColour(220);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 if (obj != null && bool.TryParse(obj.ToString(), out bool check))
@@ -146,7 +146,7 @@ namespace Blockly
                  .appendField("do ");
             block.setPreviousStatement(true, null);
             block.setNextStatement(true, null);
-            block.setColour(130);
+            block.setColour(120);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 if (obj != null && int.TryParse(obj.ToString(), out int loop))
@@ -170,7 +170,7 @@ namespace Blockly
                 .appendField("do ");
             block.setPreviousStatement(true, null);
             block.setNextStatement(true, null);
-            block.setColour(130);
+            block.setColour(120);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 if (obj != null && bool.TryParse(obj.ToString(), out bool check))
@@ -369,7 +369,7 @@ namespace Blockly
                 .setCheck(null);
             block.setInputsInline(false);
             block.setOutput(true, null);
-            block.setColour(190);
+            block.setColour(165);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 if (obj != null && bool.TryParse(obj.ToString(), out bool check))

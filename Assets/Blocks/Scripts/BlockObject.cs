@@ -10,7 +10,7 @@ using Blockly;
 public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     private GameObject trash;
-    private const float maxTrashDist = 16000f;
+    private const float maxTrashDist = 20000f;
 
     protected Connection[] myConnections;
     private const float maxConnectionDist =1500.0f;
