@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Listens for touch events and performs an AR raycast from the screen touch point.
@@ -16,6 +17,8 @@ public class PlaceOnPlane : MonoBehaviour
     [SerializeField]
     [Tooltip("Instantiates this prefab on a plane at the touch location.")]
     GameObject m_PlacedPrefab;
+    private float minY; // -380
+    private float minX; // -133
 
     /// <summary>
     /// The prefab to instantiate on touch.
@@ -34,6 +37,11 @@ public class PlaceOnPlane : MonoBehaviour
     void Awake()
     {
         m_RaycastManager = GetComponent<ARRaycastManager>();
+        GameObject canvas = GameObject.Find("Canvas");
+        float cHeight = canvas.GetComponent<Canvas>().pixelRect.height;
+        float cWidth = canvas.GetComponent<Canvas>().pixelRect.width;
+        minY = cHeight - 390;
+        minX = cWidth - 140;
     }
 
     bool TryGetTouchPosition(out Vector2 touchPosition)
@@ -63,7 +71,7 @@ public class PlaceOnPlane : MonoBehaviour
         if (!TryGetTouchPosition(out Vector2 touchPosition))
             return;
 
-        if (m_RaycastManager.Raycast(touchPosition, s_Hits, TrackableType.PlaneWithinPolygon) && !DrawerInteractions.drawerIsUp && touchPosition.y > (210))
+        if (m_RaycastManager.Raycast(touchPosition, s_Hits, TrackableType.PlaneWithinPolygon) && !DrawerInteractions.drawerIsUp && touchPosition.y > (210) && !(touchPosition.y > (minY) && touchPosition.x > (minX)))
         {
 
             // Raycast hits are sorted by distance, so the first one

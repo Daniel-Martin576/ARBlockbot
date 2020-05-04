@@ -3723,7 +3723,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1462105690}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9999868
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3776,7 +3776,8 @@ GameObject:
   - component: {fileID: 1152067728}
   - component: {fileID: 1152067727}
   - component: {fileID: 1152067726}
-  m_Layer: 0
+  - component: {fileID: 1152067729}
+  m_Layer: 5
   m_Name: Reset-icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3892,6 +3893,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1152067729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152067724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FirstSelected: {fileID: 0}
+  m_sendNavigationEvents: 1
+  m_DragThreshold: 10
 --- !u!1 &1174052047
 GameObject:
   m_ObjectHideFlags: 0
@@ -4438,7 +4454,8 @@ GameObject:
   - component: {fileID: 1373879292}
   - component: {fileID: 1373879294}
   - component: {fileID: 1373879293}
-  m_Layer: 0
+  - component: {fileID: 1373879295}
+  m_Layer: 5
   m_Name: Play-icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4554,6 +4571,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1373879290}
   m_CullTransparentMesh: 0
+--- !u!114 &1373879295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373879290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FirstSelected: {fileID: 0}
+  m_sendNavigationEvents: 1
+  m_DragThreshold: 10
 --- !u!1 &1399158008
 GameObject:
   m_ObjectHideFlags: 0
@@ -7567,7 +7599,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0009292452}
+  m_AnchoredPosition: {x: 0, y: 0.000061035156}
   m_SizeDelta: {x: 0, y: 191.9}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2011804493
