@@ -23,19 +23,12 @@ namespace Blockly
                 startBlock.function(null);
         }
 
-        public static BuggyBuddy GetBuggy()
-        {
-            GameObject robot = GameObject.FindGameObjectWithTag("Robot");
-            if (robot != null)
-                return robot.GetComponent<BuggyBuddy>();
-            return null;
-        }
-
         // =========================
         // LOGIC
         // =========================
 
-        public static GameObject createStartBlock(Transform transform) {
+        public static GameObject createStartBlock(Transform transform)
+        {
             Block block = new Block("StartBlock");
             block.appendDummyInput()
                  .appendField("Start");
@@ -44,61 +37,99 @@ namespace Blockly
             block.function = delegate (object o) { return block.callNext(); };
             block.setStart(true);
 
-            // GameObject obj =
             return block.build(transform);
-            // startBlock = block;
         }
 
-        public static GameObject createIfDoBlock(Transform transform) {
-          Block block = new Block("IfDoBlock");
-          block.appendValueInput("NAME")
-              .setCheck(null)
-              .appendField("if ");
-          block.appendStatementInput("NAME")
-              .setCheck(null)
-              .appendField("do ");
-          block.setColour(210);
-          return block.build(transform);
+        public static GameObject createIfDoBlock(Transform transform)
+        {
+            Block block = new Block("IfDoBlock");
+            block.appendValueInput("INPUT")
+                .setCheck(null)
+                .appendField("if ");
+            block.appendStatementInput("EXUC")
+                .setCheck(null)
+                .appendField("do ");
+            block.setPreviousStatement(true, null);
+            block.setNextStatement(true, null);
+            block.setColour(210);
+            block.function = delegate (object o) {
+                object obj = block.callInput("INPUT");
+                if (obj != null && bool.TryParse(obj.ToString(), out bool check))
+                    if (check)
+                        block.callInput("EXUC");
+                return block.callNext();
+            };
+
+            return block.build(transform);
         }
 
-        public static GameObject createNotBlock(Transform transform) {
-          Block block = new Block("NotBlock");
-          block.appendValueInput("NAME")
-              .setCheck(null)
-              .appendField("not");
-          block.setOutput(true, null);
-          block.setColour(210);
-          return block.build(transform);
+        public static GameObject createNotBlock(Transform transform)
+        {
+            Block block = new Block("NotBlock");
+            block.appendValueInput("INPUT")
+                .setCheck(null)
+                .appendField("not");
+            block.setOutput(true, null);
+            block.setColour(210);
+            block.function = delegate (object o) {
+                object obj = block.callInput("INPUT");
+                if (obj != null && bool.TryParse(obj.ToString(), out bool check))
+                    return !check;
+                return null;
+            };
+            return block.build(transform);
         }
 
-        public static GameObject createTestTFBlock(Transform transform) {
-          Block block = new Block("TestTFBlock");
-          block.appendValueInput("NAME")
-              .setCheck(null)
-              .appendField("test ");
-          block.appendValueInput("NAME")
-              .setCheck(null)
-              .appendField("if true ");
-          block.appendValueInput("NAME")
-              .setCheck(null)
-              .appendField("if false ");
-          block.setOutput(true, null);
-          block.setColour(210);
-          return block.build(transform);
+        public static GameObject createTestTFBlock(Transform transform)
+        {
+            Block block = new Block("TestTFBlock");
+            block.appendValueInput("INPUT")
+                .setCheck(null)
+                .appendField("test ");
+            block.appendValueInput("TRUE")
+                .setCheck(null)
+                .appendField("if true ");
+            block.appendValueInput("FALSE")
+                .setCheck(null)
+                .appendField("if false ");
+            block.setOutput(true, null);
+            block.setColour(210);
+            block.function = delegate (object o) {
+                object obj = block.callInput("INPUT");
+                if (obj != null && bool.TryParse(obj.ToString(), out bool check))
+                {
+                    if (check)
+                        return block.callInput("TRUE");
+                    else
+                        return block.callInput("FALSE");
+                }
+                return null;
+            };
+
+            return block.build(transform);
         }
 
+        /*
         public static GameObject createCompareBlock(Transform transform) {
           Block block = new Block("CompareBlock");
-          block.appendValueInput("NAME")
+          block.appendValueInput("INPUT1")
               .setCheck(null);
           block.appendDummyInput()
               .appendField(" =");
-          block.appendValueInput("NAME")
+          block.appendValueInput("INPUT2")
               .setCheck(null);
           block.setOutput(true, null);
           block.setColour(210);
-          return block.build(transform);
+            block.function = delegate (object o) {
+                object obj1 = block.callInput("INPUT1");
+                object obj2 = block.callInput("INPUT2");
+                if (obj1 != null && obj2 != null)
+                    return obj1 == obj2;
+                return null;
+            };
+            return block.build(transform);
         }
+        */
 
         // =========================
         // LOOPS
@@ -111,7 +142,8 @@ namespace Blockly
                 .setCheck(null)
                 .appendField("Loop");
             block.appendStatementInput("INPUT1")
-                 .setCheck(null);
+                 .setCheck(null)
+                 .appendField("do ");
             block.setPreviousStatement(true, null);
             block.setNextStatement(true, null);
             block.setColour(50);
@@ -127,52 +159,33 @@ namespace Blockly
             return block.build(transform);
         }
 
-        public static GameObject createRepeatXBlock(Transform transform) {
-          Block block = new Block("RepeatXBlock");
-          block.appendValueInput("NAME")
-              .setCheck(null)
-              .appendField("repeat ")
-              .appendField(new Blockly.FieldNumber(0), "NAME")
-              .appendField(" times");
-          block.appendStatementInput("NAME")
-              .setCheck(null)
-              .appendField("do ");
-          block.setOutput(true, null);
-          block.setColour(135);
-          return block.build(transform);
-        }
-
-        public static GameObject createRepeatWhileBlock(Transform transform) {
-          Block block = new Block("RepeatWhileBlock");
-          block.appendValueInput("NAME")
-              .setCheck(null)
-              .appendField("repeat ")
-              .appendField(new Blockly.FieldTextInput("dropdown here"), "NAME");
-          block.appendStatementInput("NAME")
-              .setCheck(null)
-              .appendField("do ");
-          block.setOutput(true, null);
-          block.setColour(135);
-          return block.build(transform);
-        }
-
-        public static GameObject createIteratorBlock(Transform transform) {
-          Block block = new Block("IteratorBlock");
-          block.appendValueInput("NAME")
-              .setCheck(null)
-              .appendField("count ")
-              .appendField(" from")
-              .appendField(new Blockly.FieldNumber(0), "NAME")
-              .appendField(" to")
-              .appendField(new Blockly.FieldNumber(0), "NAME")
-              .appendField(" by")
-              .appendField(new Blockly.FieldNumber(0), "NAME");
-          block.appendStatementInput("NAME")
-              .setCheck(null)
-              .appendField("do ");
-          block.setOutput(true, null);
-          block.setColour(135);
-          return block.build(transform);
+        public static GameObject createWhileBlock(Transform transform)
+        {
+            Block block = new Block("WhileBlock");
+            block.appendValueInput("INPUT")
+                .setCheck(null)
+                .appendField("While ");
+            block.appendStatementInput("EXUC")
+                .setCheck(null)
+                .appendField("do ");
+            block.setPreviousStatement(true, null);
+            block.setNextStatement(true, null);
+            block.setColour(50);
+            block.function = delegate (object o) {
+                object obj = block.callInput("INPUT");
+                if (obj != null && bool.TryParse(obj.ToString(), out bool check))
+                {
+                    while (check)
+                    {
+                        block.callInput("EXUC");
+                        obj = block.callInput("INPUT");
+                        if (!(obj != null && bool.TryParse(obj.ToString(), out check)))
+                            break;
+                    }
+                }
+                return block.callNext();
+            };
+            return block.build(transform);
         }
 
         // =========================
@@ -192,16 +205,31 @@ namespace Blockly
             return block.build(transform);
         }
 
-        public static GameObject createPiBlock(Transform transform) {
-          Block block = new Block("PiBlock");
-          block.appendValueInput("NAME")
-              .setCheck(null)
-              .appendField("π");
-          block.setOutput(true, null);
-          block.setColour(0);
-          return block.build(transform);
+        public static GameObject createPiBlock(Transform transform)
+        {
+            Block block = new Block("PiBlock");
+            block.appendDummyInput()
+                .appendField("π");
+            block.setOutput(true, null);
+            block.setColour(0);
+            return block.build(transform);
         }
 
+        public static GameObject createMathInputBlock(Transform transform)
+        {
+            Block block = new Block("InputBlock");
+            block.appendDummyInput()
+                 .appendField(new Blockly.FieldTextInput("Input"), "name");
+            block.setOutput(true, null);
+            block.setInputsInline(false);
+            block.setColour(0);
+            block.function = delegate (object o) {
+                return ((FieldTextInput)block.inputs[0].fields[0]).text;
+            };
+            return block.build(transform);
+        }
+
+        /*
         public static GameObject createAddBlock(Transform transform) {
           Block block = new Block("AddBlock");
           block.appendValueInput("NAME")
@@ -253,7 +281,7 @@ namespace Blockly
           block.setColour(0);
           return block.build(transform);
         }
-
+        */
 
         // =========================
         // MOVEMENT
@@ -270,10 +298,11 @@ namespace Blockly
             block.setColour(180);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
-                BuggyBuddy buggyBuddy = GetBuggy();
-                if (obj != null && float.TryParse(obj.ToString(), out float throttleValue) &&  buggyBuddy != null) {
-                   Debug.Log("Setting Throttle to " + throttleValue.ToString());
-                   buggyBuddy.throttle = Mathf.Clamp(throttleValue / 100.0f, -1f, 1f);
+                // Debug.Log(buggyBuddy);
+                if (obj != null && float.TryParse(obj.ToString(), out float throttleValue) && block.buggyBuddy != null)
+                {
+                    // Debug.Log("Setting Throttle to " + throttleValue.ToString());
+                    block.buggyBuddy.throttle = Mathf.Clamp(throttleValue / 100.0f, -1f, 1f);
                 }
 
                 return block.callNext();
@@ -293,12 +322,11 @@ namespace Blockly
             block.setColour(180);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
-                BuggyBuddy buggyBuddy = GetBuggy();
-                if (obj != null &&  float.TryParse(obj.ToString(), out float steeringValue) && buggyBuddy != null)
+                if (obj != null && float.TryParse(obj.ToString(), out float steeringValue) && block.buggyBuddy != null)
                 {
-                    Debug.Log("Setting Steering to " + steeringValue.ToString());
+                    // Debug.Log("Setting Steering to " + steeringValue.ToString());
                     steeringValue = Mathf.Clamp(steeringValue / 100.0f, -1f, 1f);
-                    buggyBuddy.steer = new Vector2(steeringValue, 1f);
+                    block.buggyBuddy.steer = new Vector2(steeringValue, 1f);
                 }
                 return block.callNext();
             };
@@ -318,7 +346,7 @@ namespace Blockly
                 object obj = block.callInput("INPUT");
                 if (obj != null && int.TryParse(obj.ToString(), out int sleepTime))
                 {
-                    Debug.Log("Sleeping for " + sleepTime.ToString() + " sec");
+                    // Debug.Log("Sleeping for " + sleepTime.ToString() + " sec");
                     Thread.Sleep((int)sleepTime * 1000);
                 }
                 return block.callNext();
@@ -333,15 +361,24 @@ namespace Blockly
         public static GameObject createFunctionBlock(Transform transform)
         {
             Block block = new Block("FunctionBlock");
-              block.appendValueInput("NAME")
-                  .setCheck(null)
-                  .appendField("if ");
-              block.appendDummyInput()
-                  .appendField(" return");
-              block.appendValueInput("NAME")
-                  .setCheck(null);
-              block.setOutput(true, null);
-              block.setColour(0);
+            block.appendValueInput("INPUT")
+                .setCheck(null)
+                .appendField("if");
+            block.appendValueInput("RETURN")
+              .appendField("return")
+                .setCheck(null);
+            block.setInputsInline(false);
+            block.setOutput(true, null);
+            block.setColour(0);
+            block.function = delegate (object o) {
+                object obj = block.callInput("INPUT");
+                if (obj != null && bool.TryParse(obj.ToString(), out bool check))
+                {
+                    if (check)
+                        return block.callInput("RETURN");
+                }
+                return null;
+            };
             return block.build(transform);
         }
 
@@ -373,11 +410,11 @@ namespace Blockly
                 .appendField("print");
             block.setPreviousStatement(true, null);
             block.setNextStatement(true, null);
-            block.setColour(180);
+            block.setColour(130);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
-                if (obj != null)
-                    Debug.Log("Printing " + obj.ToString());
+                // if (obj != null)
+                    // Debug.Log("Printing " + obj.ToString());
                 return block.callNext();
             };
 

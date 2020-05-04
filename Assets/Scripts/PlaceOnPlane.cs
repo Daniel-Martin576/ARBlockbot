@@ -65,6 +65,7 @@ public class PlaceOnPlane : MonoBehaviour
 
         if (m_RaycastManager.Raycast(touchPosition, s_Hits, TrackableType.PlaneWithinPolygon) && !DrawerInteractions.drawerIsUp && touchPosition.y > (210))
         {
+
             // Raycast hits are sorted by distance, so the first one
             // will be the closest hit.
             var hitPose = s_Hits[0].pose;
@@ -78,11 +79,13 @@ public class PlaceOnPlane : MonoBehaviour
             }
             else
             {
-                spawnedObject.transform.position = hitPose.position + new Vector3(0, 0.3f, 0);
-                // spawnedObject.transform.rotation = new Quaternion(0, 1, 0, 0);
-                spawnedObject.transform.rotation = quat;
-                spawnedObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
-                spawnedObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                Destroy(spawnedObject);
+                spawnedObject = Instantiate(m_PlacedPrefab, hitPose.position + new Vector3(0, 0.3f, 0), quat);
+                // spawnedObject.transform.position = hitPose.position + new Vector3(0, 0.3f, 0);
+                // // spawnedObject.transform.rotation = new Quaternion(0, 1, 0, 0);
+                // spawnedObject.transform.rotation = quat;
+                // spawnedObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                // spawnedObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             }
         }
     }

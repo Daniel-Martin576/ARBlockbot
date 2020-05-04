@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR.InteractionSystem.Sample;
 
 namespace Blockly
 {
@@ -14,6 +15,7 @@ namespace Blockly
         public bool inline;
         public Func<object, object> function;
         public bool start;
+        public BuggyBuddy buggyBuddy;
 
         private bool[] whereInline;
 

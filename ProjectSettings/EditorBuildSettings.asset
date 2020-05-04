@@ -95,9 +95,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SimpleAR/SimpleAR - Copy.unity
     guid: 4fafc9ee8c4e31840bd43256894f055f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SimpleAR/code-drawer.unity
     guid: f7ee5b2d07cef4ab9963a1385abe6f6c
+  - enabled: 1
+    path: Assets/Scenes/ARBlockbot.unity
+    guid: 00ef721b34293427fa988f87798b92e4
   m_configObjects:
     com.unity.xr.arkit.PlayerSettings: {fileID: 11400000, guid: 2d5fb8e61571b4e3897f221189089fd6,
       type: 2}

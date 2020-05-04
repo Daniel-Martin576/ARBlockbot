@@ -10,7 +10,7 @@ using Blockly;
 public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     private GameObject trash;
-    private const float maxTrashDist = 3000f;
+    private const float maxTrashDist = 16000f;
 
     protected Connection[] myConnections;
     private const float maxConnectionDist =1500.0f;
@@ -35,9 +35,9 @@ public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         myConnections = new List<Connection>(connectionDict.Keys).ToArray();
     }
 
-    public void addParentBlock(Block parentBlock) => this.parentBlock = parentBlock; 
-    
-    public Block getParentBlock() => parentBlock; 
+    public void addParentBlock(Block parentBlock) => this.parentBlock = parentBlock;
+
+    public Block getParentBlock() => parentBlock;
 
     public Connection[] getConnections()
     {
@@ -162,7 +162,7 @@ public class BlockObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
             images[i].color = beforeColors[i];
         }
 
-        // Link 
+        // Link
         if (lastPotConnection.Item2 != null)
         {
             lastPotConnection.Item3.connectionDict[lastPotConnection.Item2].GetComponent<Image>().color = new Color(1f, 1f, 0f, 0f);

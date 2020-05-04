@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -220,7 +221,7 @@ namespace Blockly
             return obj;
         }
 
-        private void changeExtenderWidth(GameObject obj, float width)
+        private static void changeExtenderWidth(GameObject obj, float width)
         {
             RectTransform childRect = obj.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
             childRect.sizeDelta = new Vector2(width, childRect.sizeDelta.y);
@@ -389,9 +390,15 @@ namespace Blockly
 
         private void adjustSize()
         {
+            Tuple<float, float> total_dim = adjustSize(rowLists);
+            total_width = total_dim.Item1;
+            total_height = total_dim.Item2;
+        }
+
+        private static Tuple<float, float> adjustSize(List<List<GameObject>> rowLists)
+        {
             float max_width1 = 0f;
             float max_width2 = 0f;
-            // total_height = 0;
 
             bool[] rowShort = new bool[rowLists.Count];
             float[] rowWidth = new float[rowLists.Count];
@@ -421,10 +428,8 @@ namespace Blockly
                 rowWidth[i] = width_sum;
                 i++;
             }
-            total_width = max_width2;
-            total_height = LAYER_HEIGHT * rowLists.Count;
-
-
+            float total_width = max_width2;
+            float total_height = LAYER_HEIGHT * rowLists.Count;
 
             i = 0;
             foreach (List<GameObject> row in rowLists)
@@ -455,8 +460,11 @@ namespace Blockly
                 }
                 i++;
             }
-
+            return new Tuple<float, float>(total_width, total_height);
         }
+
+
+
 
     }
 }
