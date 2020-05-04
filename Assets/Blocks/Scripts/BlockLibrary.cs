@@ -146,7 +146,7 @@ namespace Blockly
                  .appendField("do ");
             block.setPreviousStatement(true, null);
             block.setNextStatement(true, null);
-            block.setColour(50);
+            block.setColour(130);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 if (obj != null && int.TryParse(obj.ToString(), out int loop))
@@ -170,7 +170,7 @@ namespace Blockly
                 .appendField("do ");
             block.setPreviousStatement(true, null);
             block.setNextStatement(true, null);
-            block.setColour(50);
+            block.setColour(130);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 if (obj != null && bool.TryParse(obj.ToString(), out bool check))
@@ -295,7 +295,7 @@ namespace Blockly
                 .appendField("setThrottle");
             block.setPreviousStatement(true, null);
             block.setNextStatement(true, null);
-            block.setColour(180);
+            block.setColour(50);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 // Debug.Log(buggyBuddy);
@@ -319,7 +319,7 @@ namespace Blockly
                 .appendField("setSteering");
             block.setPreviousStatement(true, null);
             block.setNextStatement(true, null);
-            block.setColour(180);
+            block.setColour(50);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 if (obj != null && float.TryParse(obj.ToString(), out float steeringValue) && block.buggyBuddy != null)
@@ -341,7 +341,7 @@ namespace Blockly
                 .appendField("Sleep");
             block.setPreviousStatement(true, null);
             block.setNextStatement(true, null);
-            block.setColour(180);
+            block.setColour(50);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 if (obj != null && int.TryParse(obj.ToString(), out int sleepTime))
@@ -369,7 +369,7 @@ namespace Blockly
                 .setCheck(null);
             block.setInputsInline(false);
             block.setOutput(true, null);
-            block.setColour(0);
+            block.setColour(190);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 if (obj != null && bool.TryParse(obj.ToString(), out bool check))
@@ -394,7 +394,7 @@ namespace Blockly
                  .appendField(new Blockly.FieldTextInput("Input"), "name");
             block.setOutput(true, null);
             block.setInputsInline(false);
-            block.setColour(130);
+            block.setColour(255);
             block.function = delegate (object o) {
                 return ((FieldTextInput)block.inputs[0].fields[0]).text;
             };
@@ -410,7 +410,7 @@ namespace Blockly
                 .appendField("print");
             block.setPreviousStatement(true, null);
             block.setNextStatement(true, null);
-            block.setColour(130);
+            block.setColour(255);
             block.function = delegate (object o) {
                 object obj = block.callInput("INPUT");
                 // if (obj != null)
